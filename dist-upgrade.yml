@@ -1,0 +1,47 @@
+---
+- hosts:
+    all
+  gather_facts: no
+  vars:
+    verbose: false
+    log_dir: "log/{{ inventory_hostname }}"
+  pre_tasks:
+    - block:
+        - setup:
+      rescue:
+        - name: "Install required python-minimal package"
+          raw: "apt-get update && apt-get install -y python-minimal"
+        - setup:
+  tasks:
+    - name: Update APT packages
+      apt:
+        update_cache: yes
+        upgrade: dist
+        autoremove: yes
+      register: output
+
+    - name: Check changes
+      set_fact:
+        updated: true
+      when: not output.stdout | search("0 upgraded, 0 newly installed")
+
+    - name: Display changes
+      debug:
+        msg: "{{ output.stdout_lines }}"
+      when: verbose or updated is defined
+
+    - block:
+      - name: "Create log directory"
+        file:
+          path: "{{ log_dir }}"
+          state: directory
+        changed_when: false
+
+      - name: "Write changes to logfile"
+        copy:
+          content: "{{ output.stdout }}"
+          dest: "{{ log_dir }}/dist-upgrade_{{ ansible_date_time.iso8601 }}.log"
+        changed_when: false
+
+      when: updated is defined
+      connection: local
