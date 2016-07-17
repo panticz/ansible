@@ -1,0 +1,10 @@
+---
+- name: Install mysql-server package
+  package:
+    pkg: "{{ mysql_item }}"
+    state: installed
+  with_items:
+    - bsdutils
+    - mysql-server
+  loop_control:
+    loop_var: mysql_item

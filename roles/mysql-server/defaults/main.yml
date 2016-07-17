@@ -1,0 +1,4 @@
+---
+mysql_server_version: 5.5
+mysql_server_root_password: t00r
+mysql_server_install_mysqldb: true
