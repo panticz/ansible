@@ -1,0 +1,12 @@
+---
+- name: Install Tomcat {{ tomcat_version }}
+  package:
+    pkg: "{{ item }}"
+  with_items:
+    - tomcat{{ tomcat_version }}
+
+- include: configure_tomcat_port.yml
+  when: tomcat_port != 8080
+
+- include: configure_tomcat_user.yml
+  when: tomcat_password != ""

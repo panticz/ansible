@@ -1,0 +1,23 @@
+---
+- hosts: lxc.example.com
+  vars:
+    container_name: tomcat.example.com
+    container_mac: "00:00:00:00:11:22"
+  roles:
+    - lxc-create
+
+
+- hosts:
+    tomcat.example.com
+  vars:
+    tomcat_port: 80
+  roles:
+    - tomcat
+  tasks:
+    - unarchive:
+        copy: no
+        src: http://www.example.com/tomcat/app1.tar.gz
+        dest: /var/lib/tomcat{{ tomcat_version }}/webapps
+        owner: tomcat{{ tomcat_version }}
+        group: tomcat{{ tomcat_version }}
+      notify: tomcat restart

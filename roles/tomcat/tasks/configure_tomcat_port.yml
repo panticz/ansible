@@ -1,0 +1,15 @@
+---
+- name: Configure Tomcat to port {{ tomcat_port }}
+  replace:
+    dest: /etc/tomcat{{ tomcat_version }}/server.xml
+    regexp: "8080"
+    replace: "{{ tomcat_port }}"
+  notify: tomcat restart
+
+- name: Enable Tomcat AUTHBIND
+  replace:
+    dest: /etc/default/tomcat{{ tomcat_version }}
+    regexp: "^#AUTHBIND=no$"
+    replace: "AUTHBIND=yes"
+  when: tomcat_port <= 1024
+  notify: tomcat restart

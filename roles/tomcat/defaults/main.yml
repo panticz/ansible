@@ -1,0 +1,5 @@
+---
+tomcat_version: 8
+tomcat_port: 8080
+tomcat_username: admin
+tomcat_password: ""

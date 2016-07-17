@@ -1,0 +1,6 @@
+---
+- name: Configure Tomcat users
+  template:
+    src: tomcat-users.xml
+    dest: /etc/tomcat8/tomcat-users.xml
+  notify: restart tomcat
