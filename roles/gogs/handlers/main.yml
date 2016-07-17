@@ -1,0 +1,10 @@
+---
+- name: gogs restart
+  service:
+    name: gogs
+    state: restarted
+
+- name: gogs start
+  service:
+    name: gogs
+    state: started

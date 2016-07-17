@@ -1,0 +1,21 @@
+---
+- name: Remove gogs initv scripts
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - /etc/init.d/gogs
+    - /etc/init/gogs-web-1.conf
+    - /etc/init/gogs-web.conf
+
+- name: Create systemd gogs service
+  template:
+    src: etc/systemd/system/gogs.service
+    dest: /etc/systemd/system/gogs.service
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Enable gogs service
+  command: systemctl enable gogs
+  notify: gogs start

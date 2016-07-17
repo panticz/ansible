@@ -1,0 +1,38 @@
+---
+- name: Create required directories
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - /opt/gogs/custom/conf
+    - /var/log/gogs
+
+- name: Fix Gogs configuration on Ubuntu Trusty {{ ansible_distribution_release }}
+  file:
+    src: /opt/gogs/custom/conf/app.ini
+    dest: /etc/gogs/conf/app.ini
+    state: link
+    force: yes
+  when: ansible_distribution == "Ubuntu" and ansible_distribution_release == "trusty"
+
+- name: Configure gogs
+  ini_file:
+    dest: /opt/gogs/custom/conf/app.ini 
+    section: "{{ item.section }}"
+    option: "{{ item.option }}"
+    value: "{{ item.value }}"
+  with_items:
+    - { section: database, option: NAME, value: "{{ gogs_db_name }}" }
+    - { section: database, option: PASSWD, value: "{{ gogs_db_pass }}" }
+    - { section: database, option: USER, value: "{{ gogs_db_user }}" }
+    - { section: log, option: LEVEL, value: Info }
+    - { section: log, option: MODE, value: file }
+    - { section: log, option: ROOT_PATH, value: /var/log/gogs }
+    - { section: , option: RUN_USER, value: gogs }
+    - { section: repository, option: ROOT, value: /home/gogs/gogs-repositories }
+    - { section: security, option: INSTALL_LOCK, value: true }
+    - { section: security, option: SECRET_KEY, value: "{{ gogs_secret_key }}" }
+    - { section: server, option: DOMAIN, value: "{{ ansible_fqdn }}" }
+    - { section: server, option: ROOT_URL, value: "http://{{ ansible_fqdn }}/" }
+    - { section: session, option: PROVIDER, value: file }
+  notify: gogs restart

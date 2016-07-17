@@ -1,0 +1,6 @@
+---
+gogs_configure: true
+gogs_db_name: gogs
+gogs_db_user: gogs
+gogs_db_pass: gogs
+gogs_secret_key: "{{ lookup('password', '/tmp/{{ ansible_fqdn }}/gogs/gogs_secret_key') }}"

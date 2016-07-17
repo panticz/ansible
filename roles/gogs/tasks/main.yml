@@ -1,0 +1,61 @@
+---
+- name: Install required packages
+  package:
+    pkg: "{{ item }}"
+    state: installed
+  with_items:
+    - apt-transport-https
+
+- name: Add deb.packager.io repository key
+  apt_key:
+    url: "https://deb.packager.io/key"
+    validate_certs: no
+
+- name: Disable APT proxy for deb.packager.io
+  lineinfile:
+    line: 'Acquire::HTTP::Proxy::deb.packager.io "DIRECT";'
+    dest: /etc/apt/apt.conf.d/99_direct
+    create: yes
+
+- name: Add deb.packager.io repository
+  apt_repository:
+    repo: "deb https://deb.packager.io/gh/pkgr/gogs trusty pkgr"
+    update_cache: yes
+
+- name: Install gogs package
+  package:
+    pkg: gogs
+
+- name: Configure password for user gogs
+  user:
+    name: gogs
+    password: "{{ lookup('password', '/tmp/{{ ansible_fqdn }}/gogs/password') | password_hash('sha512') }}"
+  changed_when: no
+
+- name: Create DB schema
+  mysql_db:
+    login_password: "{{ mysql_server_root_password }}"
+    name: "{{ gogs_db_name }}"
+
+- name: Create DB user
+  mysql_user:
+    login_password: "{{ mysql_server_root_password }}"
+    name: "{{ gogs_db_user }}"
+    password: "{{ gogs_db_pass }}"
+    priv: "{{ gogs_db_name }}.*:ALL"
+
+- include: gogs_configure.yml
+  when: gogs_configure
+
+- name: Configure nginx as proxy
+  template:
+    src: etc/nginx/sites-available/default
+    dest: /etc/nginx/sites-available/default
+    owner: root
+    group: root
+    mode: 0644
+  notify: nginx reload
+
+- include: gogs_install_systemd.yml
+  when: (ansible_distribution == "Ubuntu" and ansible_distribution_version >= "16.04") or
+        (ansible_distribution == "Debian" and ansible_distribution_version >= "8.0")

@@ -1,0 +1,7 @@
+server {
+  listen          80;
+  server_name     {{ ansible_fqdn }} {{ ansible_default_ipv4.address }};
+  location / {
+    proxy_pass    http://localhost:3000;
+  }
+}
