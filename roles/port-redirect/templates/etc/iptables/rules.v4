@@ -1,0 +1,4 @@
+*nat
+-A PREROUTING -p tcp --dport {{ port_redirect.to }} -j REDIRECT --to-ports {{ port_redirect.from }}
+-I OUTPUT -p tcp -d 127.0.0.1 --dport {{ port_redirect.to }} -j REDIRECT --to-ports {{ port_redirect.from }}
+COMMIT

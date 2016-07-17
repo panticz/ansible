@@ -1,0 +1,12 @@
+---
+- name: Install iptables-persistent package
+  package:
+    pkg: "{{ item }}"
+  with_items:
+    - iptables-persistent
+
+- name: Redirect port {{ port_redirect.from }} to {{ port_redirect.to }}
+  template:
+    src: etc/iptables/rules.v4
+    dest: /etc/iptables/rules.v4
+  notify: netfilter-persistent restart
