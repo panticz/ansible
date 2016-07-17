@@ -1,0 +1,19 @@
+---
+- name: Disable USE_LXC_BRIDGE
+  replace:
+    dest: /etc/default/lxc-net
+    regexp: '^USE_LXC_BRIDGE="true"$'
+    replace: 'USE_LXC_BRIDGE="false"'
+
+- name: Create network bridge (replace eth0 with lxcbr0)
+  replace:
+    dest: /etc/network/interfaces
+    regexp: "{{ item.regexp }}"
+    replace: "{{ item.replace }}"
+  with_items:
+    - { regexp: '^auto eth0$', replace: 'auto lxcbr0' }
+    - { regexp: '^iface eth0 inet dhcp$', replace: 'iface lxcbr0 inet dhcp\n  bridge_ports eth0' }
+
+- name: Restart network interfaces
+  shell: "ip link delete eth0; sleep 1; ifdown --exclude=lo -a; sleep 1; ifup --exclude=lo -a"
+  notify: lxc-net restart

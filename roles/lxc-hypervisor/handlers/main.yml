@@ -1,0 +1,8 @@
+---
+- name: lxc-net restart
+  service:
+    name: lxc-net
+    state: restarted
+
+- name: sysctl reload
+  command: sysctl --system

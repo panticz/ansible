@@ -1,0 +1,5 @@
+---
+- name: Install python-lxc package
+  apt:
+    name: python-lxc
+    state: present

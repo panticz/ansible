@@ -1,0 +1,3 @@
+---
+dependencies:
+  - { role: smartmontools, when: lxc_install_smartmontools }

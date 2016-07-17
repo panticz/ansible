@@ -1,0 +1,32 @@
+---
+- name: Install LXC
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - bash-completion
+    - lxc
+    - lxcfs
+  register: install_lxc
+
+- include: "{{ item }}"
+  with_first_found:
+   - "{{ role_path }}/tasks/dist/{{ ansible_distribution|lower }}-{{ ansible_distribution_release }}.yml"
+   - "{{ role_path }}/tasks/dist/{{ ansible_distribution|lower }}.yml"
+   - "{{ role_path }}/tasks/dist/main.yml"
+
+- name: Autostart all activated container on boot
+  replace:
+    dest: /etc/default/lxc
+    regexp: '^OPTIONS=$'
+    replace: 'OPTIONS="-a"'
+
+- include: create_network_bridge.yml
+  when: install_lxc|changed and lxc_bridge
+
+- name: Optimize kernel parameter for LXC
+  template:
+    src: etc/sysctl.d/90-lxc.conf
+    dest: /etc/sysctl.d/90-lxc.conf
+  notify: sysctl reload
+  when: lxc_configure_kernel

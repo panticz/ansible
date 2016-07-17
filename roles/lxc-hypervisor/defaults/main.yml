@@ -1,0 +1,4 @@
+---
+lxc_bridge: false
+lxc_configure_kernel: false
+lxc_install_smartmontools: false
