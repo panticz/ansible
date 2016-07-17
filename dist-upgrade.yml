@@ -10,10 +10,10 @@
         - setup:
       rescue:
         - name: "Install required python-minimal package"
-          raw: "apt-get update && apt-get install -y python-minimal"
+          raw: "apt-get update && apt-get install -y --force-yes python-apt python-minimal"
         - setup:
   tasks:
-    - name: Update APT packages
+    - name: Update packages
       apt:
         update_cache: yes
         upgrade: dist
