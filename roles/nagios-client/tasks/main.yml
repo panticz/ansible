@@ -1,0 +1,17 @@
+---
+- name: Create check_mem monitoring script
+  get_url:
+    url: https://raw.github.com/justintime/nagios-plugins/master/check_mem/check_mem.pl
+    dest: /usr/lib/nagios/plugins/check_mem
+    mode: 0755
+
+- name: Create check_hddtemp monitoring script
+  get_url:
+    url: http://exchange.nagios.org/components/com_mtree/attachment.php?link_id=341&cf_id=24
+    dest: /usr/lib/nagios/plugins/check_hddtemp
+    mode: 0755
+
+- name: Install nagios-plugins-contrib without recommends
+  apt:
+    name: nagios-plugins-contrib
+    install_recommends: no
