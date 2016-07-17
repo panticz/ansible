@@ -4,7 +4,7 @@
   gather_facts: no
   vars:
     verbose: false
-    log_dir: "log/{{ inventory_hostname }}"
+    log_dir: "log/dist-upgrade/{{ inventory_hostname }}"
   pre_tasks:
     - block:
         - setup:
