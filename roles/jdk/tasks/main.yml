@@ -1,0 +1,16 @@
+- include: "{{ item }}"
+  with_first_found:
+   - "{{ role_path }}/dist/{{ ansible_distribution }}/{{ jdk_version }}/main.yml"
+   - "{{ role_path }}/dist/{{ ansible_distribution }}/main.yml"
+
+- name: Accept Java license
+  debconf: name='oracle-java{{ jdk_version }}-installer' question='shared/accepted-oracle-license-v1-1' value='true' vtype='select'
+
+- name: Disable Proxy for download.oracle.com
+  lineinfile: line='Acquire::HTTP::Proxy::download.oracle.com "DIRECT";' dest=/etc/apt/apt.conf.d/99_oracle create=yes
+
+- name: Install Java JDK
+  apt: name={{ item }} state=present state=latest
+  with_items:
+    - oracle-java{{ jdk_version }}-installer
+    - oracle-java{{ jdk_version }}-set-default
