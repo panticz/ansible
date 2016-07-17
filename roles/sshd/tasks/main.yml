@@ -1,0 +1,4 @@
+---
+- block:
+  - include: disable_password_login.yml
+  when: sshd_password_login == false
