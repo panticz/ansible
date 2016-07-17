@@ -1,7 +1,7 @@
 - include: "{{ item }}"
   with_first_found:
-   - "{{ role_path }}/dist/{{ ansible_distribution }}/{{ jdk_version }}/main.yml"
-   - "{{ role_path }}/dist/{{ ansible_distribution }}/main.yml"
+   - "{{ role_path }}/tasks/dist/{{ ansible_distribution|lower }}/{{ jdk_version }}/main.yml"
+   - "{{ role_path }}/tasks/dist/{{ ansible_distribution|lower }}/main.yml"
 
 - name: Accept Java license
   debconf:
