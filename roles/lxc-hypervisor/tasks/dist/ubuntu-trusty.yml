@@ -2,7 +2,6 @@
 - name: Add LXC repository
   apt_repository:
     repo: "ppa:ubuntu-lxc/lxd-stable"
-    state: present
     update_cache: yes
 
 - name: Check if python-lxc package is already installed
@@ -14,13 +13,11 @@
   - name: Add Ubuntu Xenial repository
     apt_repository:
       repo: "deb http://de.archive.ubuntu.com/ubuntu xenial universe"
-      state: present
       update_cache: yes
 
   - name: "Install python-lxc package"
     apt:
       name: python-lxc
-      state: present
 
   - name: Remove Ubuntu Xenial repository
     apt_repository:
