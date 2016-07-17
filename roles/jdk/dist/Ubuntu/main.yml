@@ -1,2 +1,5 @@
 - name: Add webupd8team Ubuntu repository
-  apt_repository: repo="ppa:webupd8team/java" validate_certs=no state=present update_cache=yes
+  apt_repository:
+    repo: "ppa:webupd8team/java"
+    validate_certs: no
+    update_cache: yes
