@@ -1,0 +1,104 @@
+---
+- name: Create container {{ container_name }} with {{ container_template }} {{ container_release }}
+  lxc_container:
+    name: "{{ container_name }}"
+    template: "{{ container_template }}"
+    template_options: "--release {{ container_release }}"
+    state: started
+  register: lxc_container_created
+
+- block:
+  - include: "{{ item }}"
+    with_first_found:
+      - "{{ role_path }}/tasks/dist/{{ container_template }}-{{ container_release }}.yml"
+      - "{{ role_path }}/tasks/dist/{{ container_template }}.yml"
+      - "{{ role_path }}/tasks/dist/main.yml"
+
+  - name: Configure {{ container_memory }} memory limit for {{ container_name }}
+    lxc_container:
+      name: "{{ container_name }}"
+      container_config:
+        - lxc.cgroup.memory.limit_in_bytes={{ container_memory }}
+    when: container_memory is defined
+
+  - name: Configure MAC {{ container_mac }} for {{ container_name }}
+    lineinfile:
+      dest: /var/lib/lxc/{{ container_name }}/config
+      regexp: "^lxc.network.hwaddr ="
+      line: "lxc.network.hwaddr = {{ container_mac }}"
+    when: container_mac is defined
+
+  - name: Configure IP {{ container_ip }} for {{ container_name }}
+    lxc_container:
+      name: "{{ container_name }}"
+      container_config:
+        - lxc.network.ipv4={{ container_ip }}
+    when: container_ip is defined
+
+  - name: Configure container group {{ container_group }} for {{ container_name }}
+    lxc_container:
+      name: "{{ container_name }}"
+      container_config:
+        - lxc.group={{ container_group }}
+    when: container_group is defined
+
+  - name: Configure {{ container_name }} as unconfined container
+    lxc_container:
+      name: "{{ container_name }}"
+      container_config:
+        - lxc.aa_profile=unconfined
+    when: container_unconfined == 1
+
+  - name: Enable autostart for {{ container_name }}
+    lxc_container:
+      name: "{{ container_name }}"
+      container_config:
+        - lxc.start.auto=1
+    when: container_autostart == 1
+
+  - name: Configure additional LXC parameter for {{ container_name }}
+    blockinfile:
+      marker: "# container_parameter {mark} ANSIBLE MANAGED BLOCK"
+      dest: /var/lib/lxc/{{ container_name }}/config
+      content: "{{ container_parameter }}"
+    when: container_parameter is defined
+
+  - name: Enable APT proxy on {{ container_name }}
+    copy:
+      content: 'Acquire::http::Proxy "http://{{ container_apt_proxy }}:3142/";'
+      dest: /var/lib/lxc/{{ container_name }}/rootfs/etc/apt/apt.conf.d/01proxy
+    when: container_apt_proxy != ""
+
+  - name: Update APT repository on {{ container_name }}
+    lxc_container:
+      name: "{{ container_name }}"
+      container_command: apt-get update
+
+  - name: Install Python package on {{ container_name }}
+    lxc_container:
+      name: "{{ container_name }}"
+      container_command: apt-get install -y python-minimal
+
+  - name: Remove default user ubuntu
+    lxc_container:
+      name: "{{ container_name }}"
+      container_command: userdel -rf ubuntu
+    when: container_template == "ubuntu"
+
+  - name: Configure kernel swappiness
+    copy:
+      content: vm.swappiness = 0
+      dest: /var/lib/lxc/{{ container_name }}/rootfs/etc/sysctl.d/90-swap.conf
+
+  - name: Generate root SSH key on {{ container_name }}
+    lxc_container:
+      name: "{{ container_name }}"
+      container_command: "[ -f /root/.ssh/id_rsa ] || ssh-keygen -q -b 4096 -f /root/.ssh/id_rsa -N ''"
+
+  - name: Copy Ansible SSH public key to {{ container_name }}
+    copy:
+      src: ~/.ssh/id_rsa.pub
+      dest: /var/lib/lxc/{{ container_name }}/rootfs/root/.ssh/authorized_keys
+      mode: 0600
+
+  when: lxc_container_created|changed

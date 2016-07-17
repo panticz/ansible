@@ -1,0 +1,7 @@
+---
+container_template: ubuntu
+container_release: xenial
+container_memory: 4G
+container_autostart: 1
+container_unconfined: 0
+container_apt_proxy: apt-cacher
