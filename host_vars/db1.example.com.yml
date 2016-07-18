@@ -1,0 +1,5 @@
+---
+ansible_ssh_user: root
+db_name: db_name1
+db_user: db_user1
+db_pass: db_pass
