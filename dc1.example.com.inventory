@@ -1,0 +1,32 @@
+[example.com:children]
+phy
+vm
+
+[phy]
+lxc1.example.com
+lxc2.example.com
+lxc3.example.com
+
+[vm:children]
+www
+db
+
+[www]
+www[1:3].example.com
+
+[db]
+db1m1.example.com
+db1s1.example.com
+db1s2.example.com
+
+[db:vars]
+ansible_ssh_user=dba
+proxy=ssh.example.com
+host_environment=production
+host_product=database
+
+[dev]
+dev1.example.com ansible_host=10.10.1.33
+
+[dev:vars]
+ansible_ssh_common_args='-o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no'
