@@ -7,17 +7,17 @@
     - /opt/gogs/custom/conf
     - /var/log/gogs
 
-- name: Fix Gogs configuration on Ubuntu Trusty {{ ansible_distribution_release }}
+- name: Fix Gogs configuration on Ubuntu Xenial {{ ansible_distribution_release }}
   file:
-    src: /opt/gogs/custom/conf/app.ini
-    dest: /etc/gogs/conf/app.ini
+    src: /etc/gogs/conf/app.ini
+    dest: /opt/gogs/custom/conf/app.ini
     state: link
     force: yes
-  when: ansible_distribution == "Ubuntu" and ansible_distribution_release == "trusty"
+  when: ansible_distribution == "Ubuntu" and ansible_distribution_release == "xenial"
 
 - name: Configure gogs
   ini_file:
-    dest: /opt/gogs/custom/conf/app.ini 
+    dest: /etc/gogs/conf/app.ini
     section: "{{ item.section }}"
     option: "{{ item.option }}"
     value: "{{ item.value }}"
