@@ -1,0 +1,6 @@
+---
+- name: Install letsencrypt package
+  package:
+    name: "{{ item }}"
+  with_items:
+    - letsencrypt
