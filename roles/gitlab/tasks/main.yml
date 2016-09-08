@@ -1,0 +1,37 @@
+---
+- name: Install required packages
+  package:
+    pkg: "{{ item }}"
+    state: installed
+  with_items:
+    - ca-certificates
+    - curl
+    - cron
+    - apt-transport-https
+
+- name: Disable Proxy for packages.gitlab.com
+  lineinfile:
+    line: 'Acquire::HTTP::Proxy::packages.gitlab.com "DIRECT";'
+    dest: /etc/apt/apt.conf.d/99_gitlab
+    create: yes
+
+- name: Add GitLab repository key
+  apt_key:
+    url: https://packages.gitlab.com/gitlab/gitlab-ce/gpgkey
+
+- name: Add GitLab repository
+  apt_repository:
+    repo: "{{ item }}"
+    update_cache: yes
+  with_items:
+    - "deb https://packages.gitlab.com/gitlab/gitlab-ce/ubuntu/ {{ ansible_distribution_release }} main"
+    - "deb-src https://packages.gitlab.com/gitlab/gitlab-ce/ubuntu/ {{ ansible_distribution_release }} main"
+
+- name: Install GitLab
+  apt:
+    name: "{{ item }}"
+  with_items:
+    - gitlab-ce
+
+- name: Configure GitLab
+  command: gitlab-ctl reconfigure
