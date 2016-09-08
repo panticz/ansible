@@ -1,0 +1,6 @@
+---
+- name: Install Apache2 package
+  package:
+    name: "{{ item }}"
+  with_items:
+    - apache2
