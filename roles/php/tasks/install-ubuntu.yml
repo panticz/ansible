@@ -1,0 +1,10 @@
+---
+- name: Add ondrej/php Ubuntu PHP repository
+  apt_repository:
+    repo: "ppa:ondrej/php"
+    validate_certs: false
+    update_cache: yes
+  when: (ansible_distribution_release == "trusty" and php_version == 7.0) or
+        (ansible_distribution_release == "xenial" and php_version == 5.6)
+
+- include: install.yml

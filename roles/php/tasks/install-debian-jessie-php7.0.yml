@@ -1,0 +1,11 @@
+---
+- name: Add dotdeb repository key
+  apt_key:
+    url: http://www.dotdeb.org/dotdeb.gpg
+
+- name: Add dotdeb Debian PHP 7.0 repository
+  apt_repository:
+    repo: deb http://packages.dotdeb.org {{ ansible_distribution_release }} all
+    update_cache: yes
+
+- include: install.yml

@@ -1,0 +1,11 @@
+---
+- name: Add dotdeb repository key
+  apt_key:
+    url: http://www.dotdeb.org/dotdeb.gpg
+
+- name: Add dotdeb Debian Wheezy PHP 5.6 repository
+  apt_repository:
+    repo: deb http://packages.dotdeb.org wheezy-php56 all
+    update_cache: yes
+
+- include: install-debian.yml

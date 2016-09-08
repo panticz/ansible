@@ -1,0 +1,6 @@
+---
+- name: Configure Debian PHP package name
+  set_fact:
+    php_package: php{{ php_version| int }}
+
+- include: install.yml

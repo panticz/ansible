@@ -1,0 +1,9 @@
+---
+- name: Configure PHP package name to install CLI only
+  set_fact:
+    php_package: "{{ php_package }}-cli"
+  when: php_cli_only
+
+- name: Install PHP {{ php_version }} package {{ php_package }}
+  package:
+    name: "{{ php_package }}"
