@@ -3,16 +3,17 @@
   apt:
     name: "{{ item }}"
   with_items:
-    - bash-completion
+    - software-properties-common
     - lxc
     - lxcfs
+    - bash-completion
   register: install_lxc
 
 - include: "{{ item }}"
   with_first_found:
-   - "{{ role_path }}/tasks/dist/{{ ansible_distribution|lower }}-{{ ansible_distribution_release }}.yml"
-   - "{{ role_path }}/tasks/dist/{{ ansible_distribution|lower }}.yml"
-   - "{{ role_path }}/tasks/dist/main.yml"
+   - install-{{ ansible_distribution|lower }}-{{ ansible_distribution_release }}.yml
+   - install-{{ ansible_distribution|lower }}.yml
+   - install.yml
 
 - name: Autostart all activated container on boot
   replace:
@@ -29,3 +30,9 @@
     dest: /etc/sysctl.d/90-lxc.conf
   notify: sysctl reload
   when: lxc_configure_kernel
+
+- include: create-network-bridge.yml
+  when: install_lxc|changed and lxc_bridge
+
+- include: cronjob-update-templates.yml
+  when: lxc_cronjob_update_templates

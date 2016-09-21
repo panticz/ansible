@@ -5,7 +5,7 @@
     regexp: '^USE_LXC_BRIDGE="true"$'
     replace: 'USE_LXC_BRIDGE="false"'
 
-- name: "Create network bridge (replace eth0 with lxcbr0)"
+- name: Create network bridge (replace eth0 with lxcbr0)
   replace:
     dest: /etc/network/interfaces
     regexp: "{{ item.regexp }}"

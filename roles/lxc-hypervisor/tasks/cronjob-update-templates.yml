@@ -1,0 +1,20 @@
+---
+- name: Create required directories
+  file:
+    path: /root/bin
+    state: directory
+
+- name: Download update script
+  get_url:
+    url: https://raw.githubusercontent.com/panticz/lxc/master/scripts/lxc-update-templates.sh
+    dest: /root/bin/lxc-update-templates.sh
+    mode: 0744
+
+- name: Create cronjob to daily update of LXC templates
+  cron:
+    name: "update lxc templates"
+    cron_file: lxc-update-templates
+    hour: 6
+    minute: 18
+    user: root
+    job: "/root/bin/lxc-update-templates.sh >> /tmp/lxc-update-templates.out"
