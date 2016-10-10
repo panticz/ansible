@@ -1,0 +1,11 @@
+---
+- name: Install required applications
+  package:
+    name: software-properties-common
+
+- name: Add Ansible repository
+  apt_repository:
+    repo: "ppa:ansible/ansible"
+    update_cache: yes
+
+- include: install.yml
