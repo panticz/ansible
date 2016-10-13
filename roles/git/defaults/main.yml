@@ -1,0 +1,4 @@
+---
+git_configure: true
+git_user_name: "{{ ansible_user_id }}@{{ inventory_hostname }}"
+git_user_email: "{{ git_user_name }}"

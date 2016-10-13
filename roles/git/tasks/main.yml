@@ -1,0 +1,16 @@
+---
+- name: Install Git package
+  package:
+    name: git
+
+- name: Configure Git
+  git_config:
+    scope: global
+    name: "{{ item.name }}"
+    value: "{{ item.value }}"
+  with_items:
+    - name: user.name
+      value: "{{ git_user_name }}"
+    - name: user.email
+      value: "{{ git_user_email }}"
+  when: git_configure
