@@ -1,0 +1,6 @@
+---
+dependencies:
+  - apache
+  - role: dma
+    when: dma_smarthost != ""
+

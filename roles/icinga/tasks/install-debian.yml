@@ -1,0 +1,11 @@
+---
+- name: Add debmon repository key
+  apt_key:
+    url: http://debmon.org/debmon/repo.key
+
+- name: Add debmon repository
+  apt_repository:
+    repo: "deb http://debmon.org/debmon debmon-{{ ansible_distribution_release }} main"
+    update_cache: yes
+
+- include: install-icinga{{ icinga_version }}.yml

@@ -1,0 +1,32 @@
+---
+- name: Pre-configure Icinga
+  debconf:
+    name: "{{ debconf.name }}"
+    question: "{{ debconf.question }}"
+    value: "{{ debconf.value }}"
+    vtype: "{{ debconf.vtype }}"
+  loop_control:
+    loop_var: debconf
+  with_items:
+    - name: icinga-common
+      question: icinga/check_external_commands
+      value: true
+      vtype: select
+    - name: icinga2-classicui
+      question: icinga2-classicui/adminpassword
+      value: "{{ icinga_admin_password }}"
+      vtype: string
+    - name: icinga2-classicui
+      question: icinga2-classicui/adminpassword-repeat
+      value: "{{ icinga_admin_password }}"
+      vtype: string
+
+- name: Install Icinga2 package
+  package:
+    name: "{{ package }}"
+    force: yes
+  loop_control:
+    loop_var: package
+  with_items:
+    - icinga2
+    - icinga2-classicui

@@ -1,0 +1,11 @@
+---
+- name: Add Icinga repository key
+  apt_key:
+    url: http://packages.icinga.org/icinga.key  
+
+- name: Add Icinga repository
+  apt_repository:
+    repo: "deb http://packages.icinga.org/ubuntu icinga-{{ ansible_distribution_release }} main"
+    update_cache: yes
+
+- include: install-icinga{{ icinga_version }}.yml

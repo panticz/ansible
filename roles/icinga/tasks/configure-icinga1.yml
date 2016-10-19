@@ -1,0 +1,32 @@
+---
+- name: Disable error output to syslog
+  replace:
+    dest: /etc/icinga/icinga.cfg
+    regexp: "^use_syslog=1$"
+    replace: "use_syslog=0"
+  notify: icinga reload
+
+- name: Enable external command
+  replace:
+    dest: /etc/icinga/icinga.cfg
+    regexp: "^check_external_commands=0$"
+    replace: "check_external_commands=1"
+  notify: icinga reload
+
+- name: Set permissions for external commands
+  file:
+    path: /var/lib/icinga/rw
+    mode: 02710
+
+- name: Show 1000 results by default
+  replace:
+    dest: /etc/icinga/cgi.cfg
+    regexp: "^result_limit=50$"
+    replace: "result_limit=1000"
+  notify: icinga reload
+
+- name: Redirect by default to /icinga/
+  blockinfile:
+    dest: /etc/apache2/conf-available/icinga.conf
+    content: RedirectMatch "^/$" "/icinga/"
+  notify: apache reload

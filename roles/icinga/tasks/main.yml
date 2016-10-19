@@ -1,0 +1,9 @@
+---
+- include: "{{ item }}"
+  with_first_found:
+   - install-{{ ansible_distribution|lower }}-{{ ansible_distribution_release }}.yml
+   - install-{{ ansible_distribution|lower }}.yml
+   - install-icinga{{ icinga_version }}.yml
+
+- include: configure-icinga{{ icinga_version }}.yml
+

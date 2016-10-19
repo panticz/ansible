@@ -1,0 +1,34 @@
+---
+- name: Pre-configure Icinga
+  debconf:
+    name: "{{ debconf.name }}"
+    question: "{{ debconf.question }}"
+    value: "{{ debconf.value }}"
+    vtype: "{{ debconf.vtype }}"
+  loop_control:
+    loop_var: debconf
+  with_items:
+    - name: icinga-common
+      question: icinga/check_external_commands
+      value: true
+      vtype: select
+    - name: icinga-cgi
+      question: icinga/adminpassword
+      value: "{{ icinga_admin_password }}"
+      vtype: string
+    - name: icinga-cgi
+      question: icinga/adminpassword-repeat
+      value: "{{ icinga_admin_password }}"
+      vtype: string
+    - name: icinga-cgi
+      question: icinga/httpd
+      value: apache2
+      vtype: select
+
+- name: Install Icinga package
+  package:
+    name: "{{ package }}"
+  loop_control:
+    loop_var: package
+  with_items:
+    - icinga

@@ -1,0 +1,20 @@
+---
+- name: Enable external command
+  replace:
+    dest: /etc/icinga2-classicui/cgi.cfg
+    regexp: "^check_external_commands=0$"
+    replace: "check_external_commands=1"
+  notify: icinga2 reload
+
+- name: Show 1000 results by default
+  replace:
+    dest: /etc/icinga2-classicui/cgi.cfg
+    regexp: "^result_limit=50$"
+    replace: "result_limit=1000"
+  notify: icinga2 reload
+
+- name: Redirect by default to /icinga/
+  blockinfile:
+    dest: /etc/apache2/conf-available/icinga2-classicui.conf
+    content: RedirectMatch "^/$" "/icinga2-classicui/"
+  notify: apache reload
