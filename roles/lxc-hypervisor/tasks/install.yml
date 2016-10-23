@@ -1,0 +1,9 @@
+---
+- name: Install python-lxc package
+  package:
+    name: "{{ package }}"
+  loop_control:
+    loop_var: package
+  with_items:
+    - lxc
+    - python-lxc
