@@ -1,4 +1,8 @@
 ---
 dependencies:
   - mysql-server
-  - nginx
+  - role: port-redirect
+    port_redirect:
+      from: 3000
+      to: 80
+    when: port_redirect.from

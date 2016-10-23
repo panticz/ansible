@@ -18,4 +18,5 @@
 
 - name: Enable gogs service
   command: systemctl enable gogs
+  changed_when: no
   notify: gogs start
