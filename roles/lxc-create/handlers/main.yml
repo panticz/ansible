@@ -1,21 +1,21 @@
 ---
-- name: lxc_container_start
+- name: lxc container start
   lxc_container:
     name: "{{ container_name }}"
     state: started
 
-- name: lxc_container_stop
+- name: lxc container stop
   lxc_container:
     name: "{{ container_name }}"
     state: stopped
 
-- name: lxc_container_restart
+- name: lxc container restart
   lxc_container:
     name: "{{ container_name }}"
     state: restarted
-  notify: lxc_container_wait
+  notify: lxc container wait
 
-- name: lxc_container_wait
+- name: lxc container wait
   wait_for:
     host: "{{ container_name }}"
     port: 22

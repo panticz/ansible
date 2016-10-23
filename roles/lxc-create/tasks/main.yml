@@ -8,12 +8,6 @@
   register: lxc_container_created
 
 - block:
-  - include: "{{ item }}"
-    with_first_found:
-      - "{{ role_path }}/tasks/dist/{{ container_template }}-{{ container_release }}.yml"
-      - "{{ role_path }}/tasks/dist/{{ container_template }}.yml"
-      - "{{ role_path }}/tasks/dist/main.yml"
-
   - name: Configure {{ container_memory }} memory limit for {{ container_name }}
     lxc_container:
       name: "{{ container_name }}"
@@ -34,6 +28,13 @@
       container_config:
         - lxc.network.ipv4={{ container_ip }}
     when: container_ip is defined
+
+  - name: Configure Gateway {{ container_ip }} for {{ container_name }}
+    lxc_container:
+      name: "{{ container_name }}"
+      container_config:
+        - lxc.network.ipv4.gateway={{ container_gateway }}
+    when: container_gateway is defined
 
   - name: Configure container group {{ container_group }} for {{ container_name }}
     lxc_container:
@@ -63,16 +64,25 @@
       content: "{{ container_parameter }}"
     when: container_parameter is defined
 
-  - name: Enable APT proxy on {{ container_name }}
-    copy:
-      content: 'Acquire::http::Proxy "http://{{ container_apt_proxy }}:3142/";'
-      dest: /var/lib/lxc/{{ container_name }}/rootfs/etc/apt/apt.conf.d/01proxy
-    when: container_apt_proxy != ""
+  - block:
+    - name: Enable APT proxy on {{ container_name }}
+      copy:
+        content: 'Acquire::http::Proxy "http://{{ container_apt_proxy }}:3142/";'
+        dest: /var/lib/lxc/{{ container_name }}/rootfs/etc/apt/apt.conf.d/01proxy
+      when: container_apt_proxy != ""
 
-  - name: Update APT repository on {{ container_name }}
-    lxc_container:
-      name: "{{ container_name }}"
-      container_command: apt-get update
+    - name: Update APT repository on {{ container_name }}
+      lxc_container:
+        name: "{{ container_name }}"
+        container_command: apt-get update
+
+    - name: Upgrade packages on {{ container_name }}
+      lxc_container:
+        name: "{{ container_name }}"
+        container_command: apt-get -y dist-upgrade
+      when: container_upgrade
+
+    when: container_template == "debian" or container_template == "ubuntu"
 
   - name: Install Python package on {{ container_name }}
     lxc_container:
