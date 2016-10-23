@@ -4,6 +4,4 @@
     repo: "ppa:ubuntu-lxc/lxd-stable"
     update_cache: yes
 
-- name: Install python-lxc package
-  package:
-    name: python-lxc
+- include: install.yml

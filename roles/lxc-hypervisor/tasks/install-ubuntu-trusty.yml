@@ -15,9 +15,7 @@
       repo: "deb http://de.archive.ubuntu.com/ubuntu xenial universe"
       update_cache: yes
 
-  - name: "Install python-lxc package"
-    apt:
-      name: python-lxc
+  - include: install.yml
 
   - name: Remove Ubuntu Xenial repository
     apt_repository:
