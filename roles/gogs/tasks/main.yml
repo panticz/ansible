@@ -1,7 +1,7 @@
 ---
 - name: Install required packages
   package:
-    pkg: "{{ item }}"
+    name: "{{ item }}"
     state: installed
   with_items:
     - apt-transport-https
@@ -24,13 +24,32 @@
 
 - name: Install gogs package
   package:
-    pkg: gogs
+    name: gogs
 
-- name: Configure password for user gogs
+- name: Create user git
+  user:
+    name: git
+    password: "{{ lookup('password', '/tmp/{{ inventory_hostname }}/password') | password_hash('sha512') }}"
+    update_password: on_create
+
+- name: Remove user gogs
   user:
     name: gogs
-    password: "{{ lookup('password', '/tmp/{{ ansible_fqdn }}/gogs/password') | password_hash('sha512') }}"
-  changed_when: no
+    state: absent
+    force: yes
+    remove: yes
+
+- name: Configure user git as owner for gogs directories
+  file:
+    path: "{{ item }}"
+    owner: git
+    group: git
+    recurse: yes
+  with_items:
+    - /etc/gogs
+    - /opt/gogs
+    - /var/log/gogs
+    - /var/db/gogs
 
 - name: Create DB schema
   mysql_db:

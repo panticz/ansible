@@ -28,8 +28,8 @@
     - { section: log, option: LEVEL, value: Info }
     - { section: log, option: MODE, value: file }
     - { section: log, option: ROOT_PATH, value: /var/log/gogs }
-    - { section: , option: RUN_USER, value: gogs }
-    - { section: repository, option: ROOT, value: /home/gogs/gogs-repositories }
+    - { section: , option: RUN_USER, value: git }
+    - { section: repository, option: ROOT, value: /home/git/gogs-repositories }
     - { section: security, option: INSTALL_LOCK, value: true }
     - { section: security, option: SECRET_KEY, value: "{{ gogs_secret_key }}" }
     - { section: server, option: DOMAIN, value: "{{ ansible_fqdn }}" }

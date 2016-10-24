@@ -6,12 +6,12 @@ After=mysqld.service
 
 [Service]
 Type=simple
-User=gogs
-Group=gogs
-WorkingDirectory=/home/gogs
+User=git
+Group=git
+WorkingDirectory=/home/git
 ExecStart=/opt/gogs/gogs web
 Restart=always
-Environment=USER=gogs HOME=/home/gogs
+Environment=USER=git HOME=/home/git
 
 [Install]
 WantedBy=multi-user.target
