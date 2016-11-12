@@ -1,0 +1,12 @@
+---
+- hosts: all
+  gather_facts: no
+  tasks:
+  - name: Remove SSH key
+    authorized_key:
+      user: root
+      key: "{{ item }}"
+      state: absent
+    with_items:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCYkG/+3kk+y9YiTgbMJh6M9bnVEGeNd1c3v0YNDa2YDdryZTna44nEbAnV3vZZ81eSMCHrUGapenNbPSKQtRHlNcoQXPidu2Jr9bvaTvq6SkZZiasbGts52gVKv53CM7C7MCgpEnhqfMRVOu6YuNl4D055llutN1C9TdHckKwseww2sdTAFWUN3guC1d9fRKkxxIXivZraOu91JQBzl+42cxPKrG+D3A8IJolRRWLwRmrvSe9WPt8Tf24jsNN6LjwtH8EulgMUFyT9y2DaZYXH9UdsvkE9TKE+OVO8jYhmGG2BDMmL5Ad3D+flpTMQfpZ7EVJg2vTBSiVG4kCVicvb root@www.example.com
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDhGzeitDd4jPIgTRsz2PyTPG2DbwdVb63U7UoXRBTWvYEp9I60NrqS4yL9t/9CyxWWSp55ifEPpj2xV8WYJnQ9X1+eQ7cE/2fMKUmosehg5Z+D7FVN1kHJLZrbTt4sUmEwz7bjiBdofbQT31hMN79ruL/YwYw9/J912Q2AOglspKfcu4SmbmDIsB9talaI867bT0+mBQL7jN1NsvIkOcdyMqpqief1YxFBmVBINcoYcmVVVv5zgT+rp80N1Nf9t1YRZppyRQ/ygJbbJ6IhYqpoRlfSApcjmv5TUXaTjKMmUwpdmxkOuPVWTP/5frBvJ2u0w//erZAHdF5g0+WwSSnn nagios@mail.example.com
