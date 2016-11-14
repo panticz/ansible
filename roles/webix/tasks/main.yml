@@ -1,4 +1,10 @@
 ---
+- name: Install required packages
+  package:
+    name: "{{ item }}"
+  with_items:
+    - unzip
+
 - name: Check if webix is already installed
   stat:
     path: "{{ webix_target }}"
