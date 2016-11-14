@@ -1,0 +1,15 @@
+---
+- name: Add Jenkins repository key
+  apt_key:
+    url: http://pkg.jenkins-ci.org/debian/jenkins-ci.org.key
+
+- name: Add Jenkins repository
+  apt_repository:
+    repo: "deb http://pkg.jenkins-ci.org/debian binary/"
+    update_cache: yes
+
+- name: Install Jenkins package
+  package:
+    name: "{{ item }}"
+  with_items:
+    - jenkins
