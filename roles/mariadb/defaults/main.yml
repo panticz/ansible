@@ -1,0 +1,4 @@
+---
+mariadb_server_version: 10.2
+mariadb_bind_address: 127.0.0.1
+mariadb_server_install_python_mysqldb: true

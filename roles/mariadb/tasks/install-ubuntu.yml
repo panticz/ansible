@@ -1,0 +1,12 @@
+---
+- name: Add MariaDB repository key
+  apt_key:
+    keyserver: "hkp://keyserver.ubuntu.com:80"
+    id: "0xF1656F24C74CD1D8"
+
+- name: Add MariaDB {{ ansible_distribution_release }} repository
+  apt_repository:
+    repo: "deb  http://ftp.hosteurope.de/mirror/mariadb.org/repo/{{ mariadb_server_version }}/ubuntu {{ ansible_distribution_release }} main"
+    update_cache: yes
+
+- include: install.yml

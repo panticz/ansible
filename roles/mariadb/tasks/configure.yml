@@ -1,0 +1,10 @@
+---
+- name: Configure MariaDB server
+  ini_file:
+    dest: /etc/mysql/my.cnf
+    section: "{{ item.section }}"
+    option: "{{ item.option }}"
+    value: "{{ item.value }}"
+  with_items:
+    - { section: mysqld, option: bind-address, value: "{{ mariadb_bind_address }}" }
+  notify: mysql restart

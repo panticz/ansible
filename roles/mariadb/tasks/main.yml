@@ -1,0 +1,11 @@
+---
+- include: "{{ item }}"
+  with_first_found:
+   - "install-{{ ansible_distribution|lower }}-{{ ansible_distribution_release }}.yml"
+   - "install-{{ ansible_distribution|lower }}.yml"
+   - "install.yml"
+
+- include: install-python-mysqldb.yml
+  when: mariadb_server_install_python_mysqldb
+
+- include: configure.yml

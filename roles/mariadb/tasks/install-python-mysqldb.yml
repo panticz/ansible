@@ -1,0 +1,6 @@
+---
+- name: Install python-mysqldb package
+  package:
+    name: "{{ item }}"
+  with_items:
+    - python-mysqldb
