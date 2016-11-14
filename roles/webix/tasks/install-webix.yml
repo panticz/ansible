@@ -1,0 +1,16 @@
+---
+- name: Download webix
+  unarchive:
+    src: http://docs.webix.com/builds/webix.zip
+    dest: /tmp
+    remote_src: yes
+
+- name: Install webix
+  command: cp -a /tmp/codebase "{{ webix_target }}"
+
+- name: Configure file owner for {{ webix_target }}
+  file:
+    path: "{{ webix_target }}"
+    owner: "{{ webix_owner }}"
+    group: "{{ webix_group }}"
+    recurse: yes

@@ -1,0 +1,16 @@
+---
+- name: Download webix remote
+  unarchive:
+    src: https://github.com/webix-hub/remote-php/archive/master.zip
+    dest: /tmp
+    remote_src: yes
+
+- name: Install webix remote
+  command: cp -a /tmp/remote-php-master/sources "{{ webix_remote_target }}"
+
+- name: Configure file owner for {{ webix_remote_target }}
+  file:
+    path: "{{ webix_target }}"
+    owner: "{{ webix_owner }}"
+    group: "{{ webix_group }}"
+    recurse: yes

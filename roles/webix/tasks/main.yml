@@ -1,0 +1,17 @@
+---
+- name: Check if webix is already installed
+  stat:
+    path: "{{ webix_target }}"
+  register: webix_dir
+
+- include: install-webix.yml
+  when: webix_dir.stat.exists == false
+
+- name: Check if webix remote is already installed
+  stat:
+    path: "{{ webix_remote_target }}"
+  register: webix_remote_dir
+  when: webix_remote
+
+- include: install-webix-remote.yml
+  when: webix_remote and webix_remote_dir.stat.exists == false

@@ -1,0 +1,6 @@
+---
+webix_target: /var/www/html/webix
+webix_owner: www-data
+webix_group: www-data
+webix_remote: true
+webix_remote_target: /var/www/html/webix-remote
