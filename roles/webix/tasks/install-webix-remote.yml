@@ -4,6 +4,7 @@
     src: https://github.com/webix-hub/remote-php/archive/master.zip
     dest: /tmp
     remote_src: yes
+    validate_certs: no
 
 - name: Install webix remote
   command: cp -a /tmp/remote-php-master/sources "{{ webix_remote_target }}"
