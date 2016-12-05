@@ -11,7 +11,7 @@
 
 - name: Configure file owner for {{ webix_remote_target }}
   file:
-    path: "{{ webix_target }}"
+    path: "{{ webix_remote_target }}"
     owner: "{{ webix_owner }}"
     group: "{{ webix_group }}"
     recurse: yes
