@@ -21,7 +21,7 @@
     regexp: '^OPTIONS=$'
     replace: 'OPTIONS="-a"'
 
-- include: create_network_bridge.yml
+- include: create-network-bridge.yml
   when: install_lxc|changed and lxc_bridge
 
 - name: Optimize kernel parameter for LXC
