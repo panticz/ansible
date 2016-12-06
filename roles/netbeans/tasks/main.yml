@@ -1,0 +1,24 @@
+---
+- name: Check if netbeans is already installed
+  stat:
+    path: /usr/local/netbeans-{{ netbeans_version }}
+  register: path
+
+- block:
+  - name: Download netbeans installation script
+    get_url:
+      url: "{{ netbeans_url }}"
+      dest: /tmp
+      mode: 755
+
+  - name: Install netbeans
+    shell: /tmp/netbeans-{{ netbeans_version }}-linux.sh --silent
+
+  when: path.stat.exists == false
+
+- name: Configure JDK
+  ini_file:
+    dest: /usr/local/netbeans-{{ netbeans_version }}/etc/netbeans.conf
+    section: ""
+    option: netbeans_jdkhome
+    value: /usr/lib/jvm/java-{{ jdk_version }}-oracle

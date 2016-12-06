@@ -1,0 +1,4 @@
+---
+netbeans_version: 8.2
+netbeans_url: http://download.netbeans.org/netbeans/{{ netbeans_version }}/final/bundles/netbeans-{{ netbeans_version }}-linux.sh
+netbeans_javase_url: http://download.netbeans.org/netbeans/{{ netbeans_version }}/final/bundles/netbeans-{{ netbeans_version }}-javase-linux.sh
