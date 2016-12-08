@@ -1,9 +1,0 @@
-- name: Add webupd8team Debian repository
-  apt_repository:
-    repo: "deb http://ppa.launchpad.net/webupd8team/java/ubuntu trusty main"
-    update_cache: yes
-
-- name: Add webupd8 APT-key
-  apt_key:
-    keyserver: keyserver.ubuntu.com
-    id: EEA14886
