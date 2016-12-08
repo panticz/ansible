@@ -1,0 +1,7 @@
+---
+- name: Install apt-cacher-ng
+  package:
+    pkg: "{{ item }}"
+    state: installed
+  with_items:
+    - apt-cacher-ng
