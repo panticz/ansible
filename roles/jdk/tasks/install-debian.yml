@@ -1,0 +1,12 @@
+---
+- name: Add webupd8team repository key
+  apt_key:
+    keyserver: keyserver.ubuntu.com
+    id: EEA14886
+
+- name: Add webupd8team repository
+  apt_repository:
+    repo: "deb http://ppa.launchpad.net/webupd8team/java/ubuntu trusty main"
+    update_cache: yes
+
+- include: install.yml

@@ -1,0 +1,8 @@
+---
+- name: Add webupd8team Ubuntu repository
+  apt_repository:
+    repo: "ppa:webupd8team/java"
+    validate_certs: no
+    update_cache: yes
+
+- include: install.yml
