@@ -1,0 +1,10 @@
+---
+- name: cron start
+  service:
+    name: cron
+    state: started
+
+- name: cron restart
+  service:
+    name: cron
+    state: restarted

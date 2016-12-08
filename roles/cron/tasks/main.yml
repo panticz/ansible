@@ -1,0 +1,7 @@
+---
+- name: Install cron
+  package:
+    name: "{{ item }}"
+  with_items:
+    - cron
+  notify: cron start
