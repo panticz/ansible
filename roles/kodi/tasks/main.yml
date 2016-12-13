@@ -1,0 +1,17 @@
+---
+- name: Install required applications
+  package:
+    name: software-properties-common
+
+- name: Configure Kodi repository
+  set_fact:
+    kodi_repository: "{{ 'ppa:team-xbmc/unstable' if kodi_version != 'stable' else 'ppa:team-xbmc/ppa' }}" 
+
+- name: Add Kodi repository {{ kodi_repository }}
+  apt_repository:
+    repo: "{{ kodi_repository }}"
+    update_cache: yes
+
+- name: Install Kodi
+  package:
+    name: kodi
