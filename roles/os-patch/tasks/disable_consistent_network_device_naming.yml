@@ -1,0 +1,9 @@
+---
+- name: Disable consistent network device naming
+  replace:
+    dest: /etc/default/grub
+    regexp: 'GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"'
+    replace: 'GRUB_CMDLINE_LINUX_DEFAULT="net.ifnames=0 biosdevname=0"'
+  notify: update-grub
+
+#- command: sed -i 's|GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"|GRUB_CMDLINE_LINUX_DEFAULT="net.ifnames=0 biosdevname=0 quiet splash"|g' /etc/default/grub

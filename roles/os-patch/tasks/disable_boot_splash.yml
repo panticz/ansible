@@ -1,0 +1,9 @@
+---
+- name: Disable vt_handoff boot splash
+  replace:
+    dest: /etc/grub.d/10_linux
+    regexp: 'vt_handoff="1"'
+    replace: 'vt_handoff="0"'
+  notify: update-grub
+
+#- command: sed -i 's|GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"|GRUB_CMDLINE_LINUX_DEFAULT="net.ifnames=0 biosdevname=0 quiet splash"|g' /etc/default/grub

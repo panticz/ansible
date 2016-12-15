@@ -1,0 +1,3 @@
+---
+- include: disable_consistent_network_device_naming.yml
+- include: disable_boot_splash.yml
