@@ -1,0 +1,34 @@
+---
+- name: Configure sudoers for user {{ devstack_user }}
+  blockinfile:
+    dest: /etc/sudoers
+    content: "{{ devstack_user }} ALL=(ALL) NOPASSWD: ALL"
+
+- name: Clone devstack
+  git:
+    repo: https://git.openstack.org/openstack-dev/devstack
+    dest: /home/stack/devstack
+    update: yes
+  become: yes
+  become_user: "{{ devstack_user }}"
+
+- name: Configure devstack
+  copy:
+    content: |
+      [[local|localrc]]
+      ADMIN_PASSWORD={{ devstack_password }}
+      DATABASE_PASSWORD=$ADMIN_PASSWORD
+      RABBIT_PASSWORD=$ADMIN_PASSWORD
+      SERVICE_PASSWORD=$ADMIN_PASSWORD
+    dest: /home/stack/devstack/local.conf
+  become: yes
+  become_user: "{{ devstack_user }}"
+
+- name: Install devstack
+  command: "nohup ./stack.sh | tee /tmp/stack.out"
+  args:
+    chdir: ~/devstack
+    creates: ~/devstack/.stackenv
+  async: 7200
+  become: yes
+  become_user: "{{ devstack_user }}"
