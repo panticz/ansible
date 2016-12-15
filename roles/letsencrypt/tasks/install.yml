@@ -1,6 +1,32 @@
 ---
 - name: Install letsencrypt package
   package:
-    name: "{{ item }}"
+    name: "{{ item_package }}"
+  loop_control:
+    loop_var: item_package
   with_items:
     - letsencrypt
+
+- block:
+  - name: Install required packages for dehydrated
+    package:
+      name: "{{ item_package }}"
+    loop_control:
+      loop_var: item_package
+    with_items:
+      - curl
+      - ruby
+
+  - name: Clone dehydrated repository
+    git:
+      repo: https://github.com/lukas2511/dehydrated.git
+      dest: ~/dehydrated
+      update: yes
+
+  - name: Clone dehydrated hooks repository
+    git:
+      repo: https://github.com/jbjonesjr/letsencrypt-manual-hook.git
+      dest: ~/dehydrated/hooks/manual
+      update: yes
+
+  when: enable_dns_challenge
