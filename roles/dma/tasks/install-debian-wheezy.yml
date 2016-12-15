@@ -1,0 +1,13 @@
+---
+- name: Add Debian squeeze repository
+  apt_repository:
+    repo: "deb http://archive.debian.org/debian squeeze main"
+    update_cache: yes
+
+- include: install.yml
+
+- name: Remove Debian squeeze repository
+  apt_repository:
+    repo: "deb http://archive.debian.org/debian squeeze main"
+    state: absent
+    update_cache: yes

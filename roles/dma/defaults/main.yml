@@ -1,0 +1,7 @@
+---
+dma_mailname: ""
+dma_masquerade: ""
+dma_password: ""
+dma_smarthost: ""
+dma_smarthost_insecure: false
+dma_user: ""

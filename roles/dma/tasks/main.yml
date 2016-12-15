@@ -1,0 +1,34 @@
+---
+- include: "{{ item }}"
+  with_first_found:
+   - install-{{ ansible_distribution|lower }}-{{ ansible_distribution_release }}.yml
+   - install-{{ ansible_distribution|lower }}.yml
+   - install.yml
+
+- name: Configure DMA relayhost authentification
+  template:
+    src: auth.conf
+    dest: /etc/dma/auth.conf
+    owner: root
+    group: mail
+    mode: 0640
+  when: dma_smarthost != ""
+
+- name: Configure DMA
+  template:
+    src: dma.conf
+    dest: /etc/dma/dma.conf
+    owner: root
+    group: mail
+    mode: 0640
+  when: dma_smarthost != ""
+
+- name: Configure /etc/mailname
+  copy:
+    content: |
+      {{ dma_mailname }}
+    dest: /etc/mailname
+    owner: root
+    group: root
+    mode: 0644
+  when: dma_mailname != ""

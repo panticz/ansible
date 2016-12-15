@@ -1,0 +1,8 @@
+---
+- name: Install DMA package
+  package:
+    name: "{{ item_package }}"
+  loop_control:
+    loop_var: item_package
+  with_items:
+    - dma
