@@ -1,0 +1,31 @@
+---
+- name: Check if rundeck package is already installed
+  command: dpkg-query -W rundeck
+  register: dpkg_query
+  changed_when: false
+  failed_when: dpkg_query.rc > 1
+
+- include: install.yml
+  when: dpkg_query.rc > 0
+
+- name: Configure rundeck
+  ini_file:
+    dest: /etc/rundeck/rundeck-config.properties
+    section: "{{ item.section }}"
+    option: "{{ item.option }}"
+    value: "{{ item.value }}"
+    no_extra_spaces: yes
+  with_items:
+    - { section: , option: grails.serverURL, value: "http://{{ inventory_hostname }}:80" }
+  notify: rundeck restart
+
+- name: Enable rundeck service
+  service:
+    name: rundeckd
+    enabled: yes
+    state: started
+
+- user:
+    name: rundeck
+    generate_ssh_key: yes
+    ssh_key_comment: rundeck@{{ inventory_hostname }}

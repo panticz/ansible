@@ -1,0 +1,5 @@
+---
+- name: rundeck restart
+  service:
+    name: rundeckd
+    state: restarted
