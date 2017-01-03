@@ -1,0 +1,60 @@
+---
+- name: Install Roundcube package
+  package:
+    pkg: "{{ item }}"
+  with_items:
+    - libapache2-mod-php
+    - php-mysql
+    - python-mysqldb
+    - roundcube
+
+- name: Create Roundcube database
+  mysql_db:
+    name: "{{ roundcube_db_name }}"
+  register: database
+
+- name: Create Roundcube DB user
+  mysql_user:
+    name: "{{ roundcube_db_user }}"
+    password: "{{ roundcube_db_pass }}"
+    priv: "{{ roundcube_db_name }}.*:ALL"
+
+- name: Initialize Roundcube DB
+  mysql_db:
+    state: import
+    login_user: "{{ roundcube_db_user }}"
+    login_password: "{{ roundcube_db_pass }}"
+    db: "{{ roundcube_db_name }}"
+    target: /usr/share/roundcube/SQL/mysql.initial.sql
+  when: database|changed
+
+- name: Configure Roundcube DB settings
+  ini_file:
+    dest: /etc/roundcube/debian-db.php
+    section: ""
+    option: "{{ item.option }}"
+    value: "{{ item.value }}"
+  with_items:
+    - { option: "$dbpass", value: "'{{ roundcube_db_pass }}';" }
+
+- name: Configure default IMAP server
+  ini_file:
+    dest: /etc/roundcube/config.inc.php
+    section: ""
+    option: "{{ item.option }}"
+    value: "{{ item.value }}"
+  with_items:
+    - { option: "$config['default_host']", value: "'localhost';" }
+    - { option: "$config['preview_pane']", value: "1;" }
+
+- name: Enable /roundcube alias
+  replace:
+    dest: /etc/apache2/conf-available/roundcube.conf
+    regexp: '#(.*)Alias /roundcube /var/lib/roundcube$'
+    replace: 'Alias /roundcube /var/lib/roundcube'
+  notify: apache reload
+
+- name: Enable redirection to /roundcube
+  blockinfile:
+    dest: /etc/apache2/conf-available/roundcube.conf
+    content: 'RedirectMatch "^/$" "/roundcube/"'

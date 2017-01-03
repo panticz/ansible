@@ -1,0 +1,6 @@
+---
+dependencies:
+  - apache
+  - mariadb
+  - role: php
+    php_version: 7.0
