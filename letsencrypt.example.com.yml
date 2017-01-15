@@ -1,0 +1,13 @@
+---
+- hosts: lxc.example.com
+  vars:
+    container_name: letsencrypt.example.com
+    container_group: devops
+    container_mac: 00:11:22:33:44:55
+  roles:
+    - lxc-create
+
+
+- hosts: letsencrypt.example.com
+  roles:
+    - letsencrypt
