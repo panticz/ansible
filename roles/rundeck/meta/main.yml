@@ -1,6 +1,5 @@
 ---
 dependencies:
-  - jdk
   - role: port-redirect
     port_redirect:
       from: 4440

@@ -1,2 +1,1 @@
-rundeck_version: 2.7.1-1
-rundeck_download_url: http://dl.bintray.com/rundeck/rundeck-deb/rundeck-{{ rundeck_version }}-GA.deb
+install_ansible_plugin: false

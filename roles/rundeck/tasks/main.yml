@@ -1,14 +1,35 @@
 ---
-- name: Check if rundeck package is already installed
-  command: dpkg-query -W rundeck
-  register: dpkg_query
-  changed_when: false
-  failed_when: dpkg_query.rc > 1
+- name: Install required packages
+  package:
+    name: "{{ item }}"
+  with_items:
+    - apt-transport-https
+    - default-jre
 
-- include: install.yml
-  when: dpkg_query.rc > 0
+- name: Add rundeck repository key
+  apt_key:
+    keyserver: keyserver.ubuntu.com
+    id: 379CE192D401AB61
 
-- name: Configure rundeck
+- name: Disable APT Proxy for rundeck repository
+  lineinfile:
+    line: 'Acquire::HTTP::Proxy::dl.bintray.com "DIRECT";'
+    dest: /etc/apt/apt.conf.d/99_rundeck
+    create: yes
+
+- name: Add rundeck repository
+  apt_repository:
+    repo: "deb https://dl.bintray.com/rundeck/rundeck-deb /"
+    update_cache: yes
+
+- name: Install rundeck package
+  apt:
+    name: "{{ item }}"
+    allow_unauthenticated: yes
+  with_items:
+    - rundeck
+
+- name: Configure rundeck webserver
   ini_file:
     dest: /etc/rundeck/rundeck-config.properties
     section: "{{ item.section }}"
@@ -19,13 +40,41 @@
     - { section: , option: grails.serverURL, value: "http://{{ inventory_hostname }}:80" }
   notify: rundeck restart
 
+- name: Configure rundeck email
+  ini_file:
+    dest: /etc/rundeck/rundeck-config.properties
+    section: "{{ item.section }}"
+    option: "{{ item.option }}"
+    value: "{{ item.value }}"
+    no_extra_spaces: yes
+  with_items:
+    - { section: , option: grails.mail.host, value: "{{ smtp_host }}" }
+    - { section: , option: grails.mail.port, value: "{{ smtp_port }}" }
+    - { section: , option: grails.mail.username, value: "{{ smtp_user }}" }
+    - { section: , option: grails.mail.password, value: "{{ smtp_password }}" }
+  notify: rundeck restart
+  when: smtp_host is defined
+
+- name: Ensure /var/lib/rundeck belongs to user rundeck
+  file:
+    path: /var/lib/rundeck
+    owner: rundeck
+    group: rundeck
+
 - name: Enable rundeck service
   service:
     name: rundeckd
     enabled: yes
     state: started
 
-- user:
+- name: Generate SSH key for user rundeck
+  user:
     name: rundeck
     generate_ssh_key: yes
     ssh_key_comment: rundeck@{{ inventory_hostname }}
+
+- name: Install rundeck ansible-plugin
+  get_url:
+    url: https://github.com/Batix/rundeck-ansible-plugin/releases/download/2.0.2/ansible-plugin-2.0.2.jar
+    dest: /var/lib/rundeck/libext/ansible-plugin-2.0.2.jar
+  when: install_ansible_plugin
