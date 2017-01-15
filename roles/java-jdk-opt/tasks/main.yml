@@ -1,0 +1,30 @@
+---
+- name: Create required directories
+  file:
+    path: "{{ java_directory }}"
+    state: directory
+    owner: "{{ java_user }}"
+    group: "{{ java_user }}"
+    mode: 0755
+
+- name: Check if Java {{ java_directory }} is already installed
+  stat:
+    path: "{{ java_target }}"
+  register: dir
+
+- include: install-java.yml
+  when: dir.stat.exists == false
+
+- name: Create link {{ java_directory }}/current to {{ java_target }}
+  file:
+    src: "{{ java_target }}"
+    dest: "{{ java_directory }}/current"
+    state: link
+    owner: "{{ java_user }}"
+    group: "{{ java_user }}"
+
+- name: Create link /usr/bin/java to {{ java_directory }}/current/bin/java
+  file:
+    src: "{{ java_directory }}/current/bin/java"
+    dest: /usr/bin/java
+    state: link

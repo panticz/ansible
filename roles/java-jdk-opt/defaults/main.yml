@@ -1,0 +1,13 @@
+---
+# required
+java_version: 8
+java_subversion: 112
+
+# optional
+java_build: 15
+java_file_extension: tar.gz
+java_file: jdk-{{ java_version }}u{{ java_subversion }}-linux-x64.{{ java_file_extension }}
+java_download_url: "http://download.oracle.com/otn-pub/java/jdk/{{ java_version }}u{{ java_subversion }}-b{{ build }}/{{ java_file }}"
+java_directory: /opt/jvm
+java_target: "{{ java_directory }}/jdk1.{{ java_version }}.0_{{ java_subversion }}"
+java_user: root

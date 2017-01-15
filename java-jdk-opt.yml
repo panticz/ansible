@@ -1,0 +1,4 @@
+---
+- hosts: localhost
+  roles:
+    - java-jdk-opt

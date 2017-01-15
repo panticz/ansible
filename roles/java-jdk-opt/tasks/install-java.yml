@@ -1,0 +1,35 @@
+---
+- name: Adjust download parameter
+  set_fact:
+    java_file_extension: bin
+    java_build: 10
+  when: java_version == 6
+
+- name: Download Java JDK {{ java_version }}u{{ java_subversion }}
+  get_url:
+    url: "{{ java_download_url }}"
+    headers: "Cookie:oraclelicense=accept-securebackup-cookie"
+    dest: /tmp/{{ java_file }}
+    mode: 0755
+  loop_control:
+    loop_var: build
+  with_sequence: start="{{ java_build + 5 }}" count=9 stride=-1 format="%02d"
+  ignore_errors: yes
+
+- name: Extract JDK archive /tmp/{{ java_file }} to {{ java_target }}
+  unarchive:
+    src: /tmp/{{ java_file }}
+    dest: "{{ java_directory }}"
+    copy: no
+    owner: "{{ java_user }}"
+    group: "{{ java_user }}"
+  when: java_version > 6
+
+- name: Extract JDK archive /tmp/{{ java_file }} to {{ java_target }}
+  command: /bin/bash /tmp/{{ java_file }}
+  args:
+    chdir: "{{ java_directory }}"
+    creates: "{{ java_target }}"
+  become: yes
+  become_user: "{{ java_user }}"
+  when: java_version == 6
