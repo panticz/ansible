@@ -1,0 +1,8 @@
+---
+- name: Enable automatic update of APT package list
+  apt:
+    name: "{{ item }}"
+    install_recommends: no
+  with_items:
+    - cron-apt
+  notify: cron restart
