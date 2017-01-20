@@ -1,0 +1,10 @@
+---
+hosts: rundeck-ansible.example.com
+  vars:
+    port_redirect:
+      from: 4440
+      to: 80
+    install_ansible_plugin: true
+  roles:
+    - ansible
+    - rundeck
