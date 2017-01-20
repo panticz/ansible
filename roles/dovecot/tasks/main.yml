@@ -1,0 +1,17 @@
+---
+- name: Install Dovecot
+  package:
+    name: "{{ item }}"
+  with_items:
+    - dovecot-imapd
+
+- name: Configure Dovecot
+  template:
+    src: "{{ item }}"
+    dest: "/{{ item }}"
+    mode: 0640
+  with_items:
+    - etc/dovecot/conf.d/90-auth.conf
+    - etc/dovecot/conf.d/90-imap.conf
+    - etc/dovecot/conf.d/90-mail.conf
+  notify: dovecot reload
