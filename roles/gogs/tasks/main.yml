@@ -19,7 +19,7 @@
 
 - name: Add deb.packager.io repository
   apt_repository:
-    repo: "deb https://deb.packager.io/gh/pkgr/gogs trusty pkgr"
+    repo: "deb https://deb.packager.io/gh/pkgr/gogs {{ ansible_distribution_release }} pkgr"
     update_cache: yes
 
 - name: Install gogs package
