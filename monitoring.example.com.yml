@@ -30,4 +30,4 @@
         user: root
         key: "{{ lookup('file', '/tmp/{{ inventory_hostname }}/var/lib/nagios/.ssh/id_rsa.pub') }}"
       delegate_to: "{{ item }}"
-      with_items: "{{ groups.ips }}"
+      with_items: "{{ groups.webserver }}"
