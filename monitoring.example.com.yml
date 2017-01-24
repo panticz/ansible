@@ -1,0 +1,33 @@
+---
+- hosts: lxc.example.com
+  vars:
+    container_name: monitoring.example.com
+    container_mac: 00:00:01:01:02:02
+  roles:
+    - lxc-create
+
+
+- hosts: monitoring.example.com
+  vars:
+    allow_password_login: true
+    icinga_version: 1
+  roles:
+    - icinga
+  tasks:
+    - name: Generate SSH key for user nagios
+      user:
+        name: nagios
+        generate_ssh_key: yes
+        ssh_key_comment: nagios@{{ inventory_hostname }}
+
+    - name: Get nagios public SSH key
+      fetch:
+        src: /var/lib/nagios/.ssh/id_rsa.pub
+        dest: /tmp
+
+    - name: Deploy SSH key to hosts
+      authorized_key:
+        user: root
+        key: "{{ lookup('file', '/tmp/{{ inventory_hostname }}/var/lib/nagios/.ssh/id_rsa.pub') }}"
+      delegate_to: "{{ item }}"
+      with_items: "{{ groups.ips }}"
