@@ -1,0 +1,22 @@
+---
+- name: Install required packages
+  package:
+    name: "{{ item }}"
+  with_items:
+    - apt-transport-https
+
+- name: Add Docker repository
+  apt_repository:
+    repo: deb https://apt.dockerproject.org/repo ubuntu-{{ ansible_distribution_release }} main
+    update_cache: yes
+
+- name: Add Docker repository key
+  apt_key:
+    keyserver: hkp://p80.pool.sks-keyservers.net:80
+    id: 58118E89F3A912897C070ADBF76221572C52609D
+
+- name: Install Docker package
+  package:
+    name: "{{ item }}"
+  with_items:
+    - docker-engine

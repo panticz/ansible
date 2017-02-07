@@ -1,0 +1,20 @@
+---
+- hosts: lxc.example.com
+  vars:
+    container_name: docker.example.com
+    container_group: devops
+    container_mac: 00:aa:cc:99:51:5a
+    container_template: ubuntu
+    container_release: yakkety
+    container_memory: 16G
+    container_unconfined: 1
+    container_parameter: |
+      lxc.cgroup.devices.allow = a\n
+      lxc.cgroup.cpu.shares = 128
+  roles:
+    - lxc-create
+
+
+- hosts: docker.example.com
+  roles:
+    - docker
