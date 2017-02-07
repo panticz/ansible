@@ -1,0 +1,13 @@
+---
+# ansible-playbook deploy-ssh-key.yml -i inventory [-l lxc.example.com,db.www.example.com]
+
+- hosts: all
+  gather_facts: no
+  tasks:
+  - name: Deploy SSH key
+    authorized_key:
+      user: root
+      key: "{{ item }}"
+    with_items:
+      - ssh-rsa AAVawednetJeggewWactAvJushyeytkopvaglyrebshicDejutyeyHiedaiWotLysimwadijCettontEjfonweagidJeesevtagViwurjyunaisikAckMetweunt6Q5 root@backup.example.com
+      - ssh-rsa AAShuckteabeenaikhultEzBewpOgHojTyRiaw!OrAmVoksikGailkEnWewlUlkethcyHonpotvstAthoghyojteshubdeiphUdwoghaicgephIjDonUmadugUndiGR nagios@monitoring.example.com
