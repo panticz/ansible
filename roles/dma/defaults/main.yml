@@ -5,3 +5,5 @@ dma_password: ""
 dma_smarthost: ""
 dma_smarthost_insecure: false
 dma_user: ""
+dma_securetransfer: ""
+dma_starttls: ""
