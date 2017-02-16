@@ -3,6 +3,7 @@
   apt_repository:
     repo: "deb http://archive.debian.org/debian squeeze main"
     update_cache: yes
+  changed_when: false
 
 - include: install.yml
 
@@ -11,3 +12,4 @@
     repo: "deb http://archive.debian.org/debian squeeze main"
     state: absent
     update_cache: yes
+  changed_when: false
