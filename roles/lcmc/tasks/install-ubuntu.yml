@@ -1,0 +1,17 @@
+---
+- name: Install required packages
+  package:
+    name: "{{ package }}"
+  loop_control:
+    loop_var: package
+  with_items:
+    - apt-transport-https
+
+- name: Download LCMC package
+  get_url:
+    url: https://netix.dl.sourceforge.net/project/lcmc/lcmc_{{ lcmc_version }}_all.deb
+    dest: /tmp/lcmc_{{ lcmc_version }}_all.deb
+
+- name: Install LCMC package
+  apt:
+    deb: /tmp/lcmc_{{ lcmc_version }}_all.deb

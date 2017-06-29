@@ -1,0 +1,4 @@
+---
+dependencies:
+  - role: jdk
+    when: lcmc_install_jdk
