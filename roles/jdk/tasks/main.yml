@@ -20,7 +20,7 @@
 
 - name: Install Java JDK
   package:
-    name:"{{ item }}"
+    name: "{{ item }}"
   with_items:
     - oracle-java{{ jdk_version }}-installer
     - oracle-java{{ jdk_version }}-set-default
