@@ -3,7 +3,7 @@
 
 - hosts: all
   tasks:
-    - setup
+    - setup:
 
     - debug:
         msg: "{{ vars }}"
