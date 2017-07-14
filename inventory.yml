@@ -1,0 +1,9 @@
+---
+# ansible-playbook inventory.yml -i inventory/all -l linux
+
+- hosts: all
+  tasks:
+    - setup
+
+    - debug:
+        msg: "{{ vars }}"
