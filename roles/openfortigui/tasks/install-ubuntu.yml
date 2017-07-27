@@ -1,0 +1,12 @@
+---
+- name: Add styrion.at repository key
+  apt_key:
+    keyserver: keyserver.ubuntu.com
+    id: 2FAB19E7CCB7F415
+
+- name: Add styrion.at repository
+  apt_repository:
+    repo: deb http://styrion.at/apt/ ./
+    update_cache: yes
+
+- include: install.yml

@@ -1,0 +1,4 @@
+---
+- name: Install OpenFortiGUI packages
+  package:
+    name: openfortigui
