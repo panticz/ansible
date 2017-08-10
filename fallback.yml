@@ -1,0 +1,9 @@
+---
+- hosts: "{{ hostname }}"
+  gather_facts: no
+  pre_tasks:
+    - block:
+        - setup:
+      rescue:
+        - raw: apt-get update && apt-get install -y python-minimal
+        - setup:

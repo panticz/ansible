@@ -1,0 +1,7 @@
+---
+- include: fallback.yml hostname=www5.example.com
+
+
+- hosts: www5.example.com
+  roles:
+    - apache
