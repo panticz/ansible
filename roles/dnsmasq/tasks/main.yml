@@ -1,0 +1,8 @@
+---
+- name: Install dnsmasq
+  package:
+    name: "{{ package }}"
+  loop_control:
+    loop_var: package
+  with_items:
+    - dnsmasq
