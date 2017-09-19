@@ -1,0 +1,30 @@
+---
+- name: Install required packages
+  package:
+    name: "{{ item_package }}"
+  loop_control:
+    loop_var: item_package
+  with_items:
+    - ntp
+    - ntpdate
+  register: sync_time
+
+- block:
+    - name: Stop ntp service
+      service:
+        name: ntp
+        state: stopped
+
+    - name: Synchronize date
+      command: ntpdate ntp.ubuntu.com
+
+    - name: Update hardware clock
+      command: hwclock --systohc
+
+    - name: Enable and start ntp service
+      service:
+        name: ntp
+        enabled: yes
+        state: started
+
+  when: sync_time.changed or ntp_force_update
