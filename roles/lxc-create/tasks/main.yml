@@ -111,4 +111,10 @@
       dest: /var/lib/lxc/{{ container_name }}/rootfs/root/.ssh/authorized_keys
       mode: 0600
 
+  - name: Restart container
+    lxc_container:
+      name: "{{ container_name }}"
+      state: restarted
+    when: container_restart
+
   when: lxc_container_created|changed
