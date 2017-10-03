@@ -19,21 +19,21 @@
     lineinfile:
       dest: /var/lib/lxc/{{ container_name }}/config
       regexp: "^lxc.network.hwaddr ="
-      line: "lxc.network.hwaddr = {{ container_mac }}"
+      line: "lxc.net.0.hwaddr={{ container_mac }}"
     when: container_mac is defined
 
   - name: Configure IP {{ container_ip }} for {{ container_name }}
     lxc_container:
       name: "{{ container_name }}"
       container_config:
-        - lxc.network.ipv4={{ container_ip }}
+        - lxc.net.0.ipv4.address={{ container_ip }}
     when: container_ip is defined
 
   - name: Configure Gateway {{ container_ip }} for {{ container_name }}
     lxc_container:
       name: "{{ container_name }}"
       container_config:
-        - lxc.network.ipv4.gateway={{ container_gateway }}
+        - lxc.net.0.ipv4.gateway={{ container_gateway }}
     when: container_gateway is defined
 
   - name: Configure container group {{ container_group }} for {{ container_name }}
@@ -47,7 +47,7 @@
     lxc_container:
       name: "{{ container_name }}"
       container_config:
-        - lxc.aa_profile=unconfined
+        - lxc.apparmor.profile=unconfined
     when: container_unconfined == 1
 
   - name: Enable autostart for {{ container_name }}
