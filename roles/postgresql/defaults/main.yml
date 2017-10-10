@@ -1,0 +1,2 @@
+---
+postgresql_install_python_psycopg2: yes

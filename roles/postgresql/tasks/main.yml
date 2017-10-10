@@ -9,10 +9,15 @@
     repo: deb http://apt.postgresql.org/pub/repos/apt/ {{ ansible_distribution_release }}-pgdg main
     update_cache: yes
 
-- name: Install postgresql package
+- name: Install PostgreSQL
   package:
     name: "{{ package }}"
   loop_control:
     loop_var: package
   with_items:
     - postgresql
+
+- name: Install python-psycopg2
+  package:
+    name: python-psycopg2
+  when: postgresql_install_python_psycopg2
