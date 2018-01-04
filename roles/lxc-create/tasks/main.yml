@@ -29,12 +29,19 @@
         - lxc.net.0.ipv4.address={{ container_ip }}
     when: container_ip is defined
 
-  - name: Configure Gateway {{ container_ip }} for {{ container_name }}
+  - name: Configure Gateway {{ container_gateway }} for {{ container_name }}
     lxc_container:
       name: "{{ container_name }}"
       container_config:
         - lxc.net.0.ipv4.gateway={{ container_gateway }}
     when: container_gateway is defined
+
+  - name: Configure DNS {{ container_dns }} for {{ container_name }}
+    lineinfile:
+      dest: /var/lib/lxc/{{ container_name }}/rootfs/etc/network/interfaces
+      regexp: "^dns-nameserver"
+      line: "dns-nameserver {{ container_dns }}"
+    when: container_dns is defined
 
   - name: Configure container group {{ container_group }} for {{ container_name }}
     lxc_container:
