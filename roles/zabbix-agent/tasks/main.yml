@@ -1,0 +1,31 @@
+---
+- name: Add zabbix repository key
+  apt_key:
+    url: http://repo.zabbix.com/zabbix-official-repo.key
+    id: 082AB56BA14FE591
+
+- name: Add zabbix {{ zabbix_release }} repository
+  apt_repository:
+    repo: deb http://repo.zabbix.com/zabbix/{{ zabbix_release }}/ubuntu {{ ansible_distribution_release|lower }} main
+    update_cache: yes
+
+- name: Install zabbix-agent package
+  package:
+    name: zabbix-agent
+
+- name: Configure Zabbix server
+  ini_file:
+    dest: /etc/zabbix/zabbix_agentd.conf
+    section: ""
+    option: "{{ item.option }}"
+    value: "{{ item.value }}"
+    no_extra_spaces: yes
+  with_items:
+    - { option: Server, value: "{{ zabbix_server }}" }
+    - { option: ServerActive, value: "{{ zabbix_server }}" }
+  notify: service zabbix-agent restart
+
+- name: Enable zabbix-agent service
+  service:
+    name: zabbix-agent
+    enabled: yes
