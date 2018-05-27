@@ -1,0 +1,4 @@
+zabbix_release: 3.4
+zabbix_db_name: zabbix
+zabbix_db_username: zabbix
+zabbix_db_password: zabbix

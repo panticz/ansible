@@ -1,0 +1,76 @@
+---
+- name: Add zabbix repository key
+  apt_key:
+    url: http://repo.zabbix.com/zabbix-official-repo.key
+    id: 082AB56BA14FE591
+  state: present
+
+- name: Add zabbix {{ zabbix_release }} repository
+  apt_repository:
+    repo: deb http://repo.zabbix.com/zabbix/{{ zabbix_release }}/ubuntu {{ ansible_distribution_release|lower }} main
+    update_cache: yes
+
+- name: Install Zabbix server packages
+  package:
+    name: "{{ item }}"
+  with_items:
+    - zabbix-server-mysql
+    - zabbix-frontend-php
+
+- name: Install database packages
+  package:
+    name: "{{ item }}"
+  with_items:
+    - python-mysqldb
+
+- name: Configure PHP date.timezone
+  copy:
+    content: date.timezone = Europe/Berlin
+    dest: /etc/php/7.0/mods-available/zabbix.ini
+
+- name: Enable Apache zabbix configuration
+  file:
+    src: /etc/php/7.0/mods-available/zabbix.ini
+    dest: /etc/php/7.0/apache2/conf.d/zabbix.ini
+    state: link
+  notify: apache reload
+
+- name: Create database {{ zabbix_db_name }}
+  mysql_db:
+    name: "{{ zabbix_db_name }}"
+    encoding: utf8
+
+- name: Create database user {{ zabbix_db_username }}
+  mysql_user:
+    name: "{{ zabbix_db_username }}"
+    password: "{{ zabbix_db_password }}"
+    priv: '{{ zabbix_db_name }}.*:ALL'
+
+- name: Decompress Zabbix DB
+  shell: gzip -cdk /usr/share/doc/zabbix-server-mysql/create.sql.gz > /tmp/create.sql
+  args:
+    creates: /tmp/create.sql
+
+- name: Import Zabbix DB
+  mysql_db:
+    state: import
+    name: zabbix
+    target: /tmp/create.sql
+
+- name: Configure Zabbix server
+  ini_file:
+    dest: /etc/zabbix/zabbix_server.conf
+    section: ""
+    option: "{{ item.option }}"
+    value: "{{ item.value }}"
+    no_extra_spaces: yes
+  with_items:
+    - { option: DBPassword, value: "{{ zabbix_db_password }}" }
+  notify: service zabbix-server restart
+
+# todo: autoconfigure zabbix webgui
+
+- name: Enable zabbix-server service
+  service:
+    name: zabbix-server
+    enabled: yes
