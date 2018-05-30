@@ -1,0 +1,25 @@
+---
+- name: Install autofs package
+  package:
+    name: "{{ item }}"
+  with_items:
+    - autofs
+
+- name: Create /etc/auto.master.d directory
+  file:
+    path: /etc/auto.master.d
+    state: directory
+
+- name: Create /etc/auto.master.d/media.autofs
+  copy:
+    content: /media /etc/auto.media
+    dest: /etc/auto.master.d/media.autofs
+  when: autofs_mount != ""
+  notify: autofs restart
+
+- name: Create /etc/auto.media
+  copy:
+    content: "{{ autofs_mount }}"
+    dest: /etc/auto.media
+  when: autofs_mount != ""
+  notify: autofs restart

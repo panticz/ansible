@@ -1,0 +1,6 @@
+---
+- hosts: localhost
+  vars:
+    autofs_mount: backup -fstype=nfs,rw,async,vers=3 nas.example.com:/volume1/backup
+  roles:
+    - autofs
