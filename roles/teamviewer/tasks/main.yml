@@ -1,0 +1,18 @@
+---
+- name: Add TeamViewer repository key
+  apt_key:
+    url: https://download.teamviewer.com/download/linux/signature/TeamViewer2017.asc 
+
+- name: Add TeamViewer repository
+  apt_repository:
+    repo: "{{ item }}"
+    update_cache: yes
+  with_items:
+    - deb http://linux.teamviewer.com/deb stable main
+    - deb http://linux.teamviewer.com/deb preview main
+
+- name: Install TeamViewer
+  package:
+    name: "{{ item }}"
+  with_items:
+    - teamviewer
