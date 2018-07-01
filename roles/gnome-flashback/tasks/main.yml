@@ -1,0 +1,8 @@
+---
+- name: Install GNOME Flashback and required packages
+  package:
+    name: "{{ item }}"
+  with_items:
+    - gnome-session-flashback
+    - gnome-tweak-tool
+    - gtk2-engines-pixbuf
