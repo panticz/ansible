@@ -1,0 +1,20 @@
+---
+# sudo ansible-playbook app.example.yml
+
+
+- hosts: localhost
+  pre_tasks:
+    - name: Update APT packages
+      apt:
+        update_cache: yes
+        upgrade: dist
+        autoremove: yes
+  roles:
+    - role: app
+      app_install:
+        - ubuntu-desktop
+        - vim
+      app_remove:
+        - aisleriot
+        - gnome-sudoku
+      tags: app
