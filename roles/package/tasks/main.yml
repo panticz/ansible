@@ -1,0 +1,27 @@
+---
+- block:
+  - name: Install packages
+    package:
+      name: "{{ item }}"
+    with_items:
+      - "{{ package_install }}"
+    ignore_errors: "{{ package_ignore_errors }}"
+
+  when: package_install
+
+- block:
+  - name: Uninstall packages
+    package:
+      name: "{{ item }}"
+      state: absent
+    with_items:
+      - "{{ package_remove }}"
+    ignore_errors: "{{ package_ignore_errors }}"
+
+  - name: Uninstall no longer required packages
+    apt:
+      update_cache: yes
+      autoclean: yes
+    when: ansible_distribution == "Debian" or ansible_distribution == "Ubuntu"
+
+  when: package_remove

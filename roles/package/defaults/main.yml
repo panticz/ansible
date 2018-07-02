@@ -1,0 +1,4 @@
+---
+package_install: ""
+package_remove: ""
+package_ignore_errors: yes
