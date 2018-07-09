@@ -1,0 +1,47 @@
+---
+- name: Create required directories
+  file:
+    path: /opt/sqldeveloper
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- unarchive:
+    src: "{{ sqldeveloper_file }}"
+    dest: /opt
+    creates: /opt/sqldeveloper/sqldeveloper.sh
+    owner: root
+    group: root
+
+- name: Create starter
+  copy:
+    src: oracle-sql-developer.desktop
+    dest: /usr/share/applications/oracle-sql-developer.desktop
+    owner: root
+    group: root
+    mode: 0755
+
+- block:
+  - name: Create user directory
+    file:
+      path: /home/{{ sqldeveloper_user }}/.sqldeveloper
+      state: directory
+      owner: "{{ sqldeveloper_user }}"
+      group: "{{ sqldeveloper_user }}"
+      mode: 0750
+
+  - name: Get java version
+    shell: ls /usr/lib/jvm | grep oracle | tail -1
+    changed_when: no
+    register: cmd
+
+  - name: Create sqldeveloper starter
+    copy:
+      content: /usr/lib/jvm/{{ cmd.stdout }}/
+      dest: /home/{{ sqldeveloper_user }}/.sqldeveloper/jdk
+      owner: "{{ sqldeveloper_user }}"
+      group: "{{ sqldeveloper_user }}"
+      mode: 0644
+
+  when: sqldeveloper_user != ""
