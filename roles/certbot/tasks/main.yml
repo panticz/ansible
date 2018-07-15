@@ -1,0 +1,31 @@
+---
+- name: Install required packages
+  package:
+    name: "{{ item }}"
+  with_items:
+    - software-properties-common
+
+- name: Add certbot PPA repository
+  apt_repository:
+    repo: ppa:certbot/certbot
+    update_cache: yes
+
+- name: Install certbot packages
+  package:
+    name: "{{ item }}"
+  with_items:
+    - certbot
+
+- name: Install certbot_install_apache_support packages
+  package:
+    name: "{{ item }}"
+  with_items:
+    - certbot
+  when: certbot_install_apache_support
+
+- name: Install python-certbot-nginx packages
+  package:
+    name: "{{ item }}"
+  with_items:
+    - certbot
+  when: certbot_install_nginx_support
