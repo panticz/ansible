@@ -8,7 +8,7 @@
 
 - name: Add deb.packager.io repository key
   apt_key:
-    url: "https://deb.packager.io/key"
+    url: https://dl.packager.io/srv/pkgr/gogs/key
     validate_certs: no
 
 - name: Disable APT proxy for deb.packager.io
@@ -19,7 +19,8 @@
 
 - name: Add deb.packager.io repository
   apt_repository:
-    repo: "deb https://deb.packager.io/gh/pkgr/gogs {{ ansible_distribution_release }} pkgr"
+    repo: deb https://dl.packager.io/srv/deb/pkgr/gogs/pkgr/ubuntu {{ ansible_distribution_release }} main
+    validate_certs: no
     update_cache: yes
 
 - name: Install gogs package
