@@ -16,6 +16,12 @@
 
   when: path.stat.exists == false
 
+- name: Link netbeans binary to /usr/local/bin/netbeans
+  file:
+    src: /usr/local/netbeans-8.2/bin/netbeans
+    dest: /usr/local/bin/netbeans
+    state: link
+
 - name: Configure JDK
   ini_file:
     dest: /usr/local/netbeans-{{ netbeans_version }}/etc/netbeans.conf
