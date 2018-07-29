@@ -5,5 +5,7 @@
     - block:
         - setup:
       rescue:
-        - raw: apt-get update && apt-get install -y python-minimal
+        - name: Install python-minimal package
+          raw: apt-get update -y && apt-get install -y python-minimal
+
         - setup:
