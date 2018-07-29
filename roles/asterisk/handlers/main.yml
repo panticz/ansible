@@ -1,0 +1,15 @@
+---
+- name: service asterisk start
+  service:
+    name: asterisk
+    state: started
+
+- name: service asterisk stop
+  service:
+    name: asterisk
+    state: stopped
+
+- name: service asterisk restart
+  service:
+    name: asterisk
+    state: restarted

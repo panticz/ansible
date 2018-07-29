@@ -1,0 +1,9 @@
+---
+- name: Install asterisk package
+  package:
+    name: "{{ package }}"
+  loop_control:
+    loop_var: package
+  with_items:
+    - asterisk
+    - asterisk-mp3
