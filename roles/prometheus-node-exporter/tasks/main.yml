@@ -1,0 +1,6 @@
+---
+- name: Install prometheus-node-exporter
+  package:
+    name: "{{ item }}"
+  with_items:
+    - prometheus-node-exporter
