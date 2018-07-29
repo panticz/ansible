@@ -1,0 +1,2 @@
+prometheus_install_alertmanager: false
+prometheus_install_pushgateway: false

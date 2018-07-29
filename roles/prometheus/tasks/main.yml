@@ -1,0 +1,20 @@
+---
+- name: Install prometheus
+  package:
+    name: "{{ item }}"
+  with_items:
+    - prometheus
+
+- name: Install prometheus-alertmanager
+  package:
+    name: "{{ item }}"
+  with_items:
+    - prometheus-alertmanager
+  when: prometheus_install_alertmanager
+
+- name: Install prometheus-pushgateway
+  package:
+    name: "{{ item }}"
+  with_items:
+    - prometheus-pushgateway
+  when: prometheus_install_pushgateway
