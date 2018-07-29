@@ -1,7 +1,7 @@
 ---
 - name: Add ondrej/php Ubuntu PHP repository
   apt_repository:
-    repo: "ppa:ondrej/php"
+    repo: ppa:ondrej/php
     validate_certs: false
     update_cache: yes
   when: (ansible_distribution_release == "trusty" and php_version == 7.0) or
