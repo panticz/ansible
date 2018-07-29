@@ -7,3 +7,27 @@
 - name: Install PHP {{ php_version }} package {{ php_package }}
   package:
     name: "{{ php_package }}"
+
+- name: Check if apache2 is installed
+  command: dpkg-query -W apache2
+  register: dpkg
+  failed_when: dpkg.rc > 1
+  changed_when: no
+
+- name: Install libapache2 package
+  package:
+    name: libapache2-mod-php{{ php_version }}
+  notify: service apache restart
+  when: dpkg.rc == 0
+
+- name: Check if mariadb-server is installed
+  command: dpkg-query -W mariadb-server
+  register: dpkg
+  failed_when: dpkg.rc > 1
+  changed_when: no
+
+- name: Install php-mysql package
+  package:
+    name: php{{ php_version }}-mysql
+  notify: service apache restart
+  when: dpkg.rc == 0
