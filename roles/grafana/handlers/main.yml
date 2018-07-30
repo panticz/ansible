@@ -1,0 +1,20 @@
+---
+- name: service grafana-server start
+  service:
+    name: grafana-server
+    state: started
+
+- name: service grafana-server stop
+  service:
+    name: grafana-server
+    state: stoped
+
+- name: service grafana-server reload
+  service:
+    name: grafana-server
+    state: reloaded
+
+- name: service grafana-server restart
+  service:
+    name: grafana-server
+    state: restarted
