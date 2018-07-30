@@ -10,6 +10,12 @@
 
 - name: Install Grafana
   package:
-    pkg: "{{ item }}"
+    name: "{{ item }}"
   with_items:
     - grafana
+
+- name: Enable and start Grafana service
+  service:
+    name: grafana-server
+    enabled: yes
+    state: started
