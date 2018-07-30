@@ -1,0 +1,15 @@
+---
+- name: service apt-cacher-ng start
+  service:
+    name: apt-cacher-ng
+    state: started
+
+- name: service grafana-server stop
+  service:
+    name: apt-cacher-ng
+    state: stoped
+
+- name: service apt-cacher-ng restart
+  service:
+    name: apt-cacher-ng
+    state: restarted
