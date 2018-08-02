@@ -1,24 +1,32 @@
 ---
-- name: Check if netbeans is already installed
-  stat:
-    path: /usr/local/netbeans-{{ netbeans_version }}
-  register: path
+- name: Create required directories
+  file:
+    path: /opt
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
 
-- block:
-  - name: Download netbeans installation script
-    get_url:
-      url: "{{ netbeans_url }}"
-      dest: /tmp
-      mode: 755
+- name: Download and extract netbeans archive
+  unarchive:
+    src: "{{ netbeans_url }}"
+    remote_src: yes
+    dest: /opt
+    creates: /opt/netbeans
+    owner: root
+    group: root
 
-  - name: Install netbeans
-    shell: /tmp/netbeans-{{ netbeans_version }}-linux.sh --silent
-
-  when: path.stat.exists == false
+- name: Create netbeans starter
+  copy:
+    src: netbeans.desktop
+    dest: /usr/share/applications/
+    owner: root
+    group: root
+    mode: 0755
 
 - name: Link netbeans binary to /usr/local/bin/netbeans
   file:
-    src: /usr/local/netbeans-8.2/bin/netbeans
+    src: /opt/netbeans/bin/netbeans
     dest: /usr/local/bin/netbeans
     state: link
 

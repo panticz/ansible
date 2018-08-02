@@ -1,4 +1,3 @@
 ---
-netbeans_version: 8.2
-netbeans_url: http://download.netbeans.org/netbeans/{{ netbeans_version }}/final/bundles/netbeans-{{ netbeans_version }}-linux.sh
-netbeans_javase_url: http://download.netbeans.org/netbeans/{{ netbeans_version }}/final/bundles/netbeans-{{ netbeans_version }}-javase-linux.sh
+netbeans_version: 9.0
+netbeans_url: http://www-eu.apache.org/dist/incubator/netbeans/incubating-netbeans-java/incubating-{{ netbeans_version }}/incubating-netbeans-java-{{ netbeans_version }}-bin.zip

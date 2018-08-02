@@ -1,0 +1,9 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=NetBeans IDE
+Exec=/bin/sh "/opt/netbeans/bin/netbeans"
+Icon=/opt/netbeans/nb/netbeans.png
+Categories=Application;Development;Java;IDE
+Version=1.0
+Type=Application
+Terminal=0
