@@ -1,13 +1,12 @@
 ---
 - name: Install required packages
   package:
-    pkg: "{{ item }}"
-    state: installed
+    name: "{{ item }}"
   with_items:
-    - ca-certificates
-    - curl
-    - cron
     - apt-transport-https
+    - ca-certificates
+    - cron
+    - curl
 
 - name: Disable Proxy for packages.gitlab.com
   lineinfile:
@@ -24,11 +23,11 @@
     repo: "{{ item }}"
     update_cache: yes
   with_items:
-    - "deb https://packages.gitlab.com/gitlab/gitlab-ce/ubuntu/ {{ ansible_distribution_release }} main"
-    - "deb-src https://packages.gitlab.com/gitlab/gitlab-ce/ubuntu/ {{ ansible_distribution_release }} main"
+    - deb https://packages.gitlab.com/gitlab/gitlab-ce/ubuntu/ {{ ansible_distribution_release }} main
+    - deb-src https://packages.gitlab.com/gitlab/gitlab-ce/ubuntu/ {{ ansible_distribution_release }} main
 
 - name: Install GitLab
-  apt:
+  package:
     name: "{{ item }}"
   with_items:
     - gitlab-ce
