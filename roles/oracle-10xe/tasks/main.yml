@@ -1,0 +1,51 @@
+---
+- block:
+  - name: Enable i386 architecture
+    command: dpkg --add-architecture i386
+
+  - name: Update APT repository
+    apt:
+      update_cache: yes
+
+  - name: Install libc6:i386 package
+    apt:
+      name: "{{ item }}"
+    with_items:
+      - libc6:i386
+
+  when: ansible_architecture == "x86_64"
+
+- name: Link /bin/sh to /bin/bash
+  file:
+    src: bash
+    dest: /bin/sh
+    state: link
+  when: ansible_distribution == "Ubuntu"
+
+- name: Download deb files
+  get_url:
+    url: "{{ item }}"
+    dest: "/tmp/{{ item.split('/')[-1] }}"
+  with_items:
+    - "{{ oracle_xe_deb_files_url }}"
+  register: install
+
+- name: Install deb packages
+  apt:
+    deb: "/tmp/{{ item.split('/')[-1] }}"
+  with_items:
+    - "{{ oracle_xe_deb_files_url }}"
+  when: install is changed
+
+- name: Configure Oracle XE
+  shell: 'printf "8080\n1521\n{{ oracle_xe_password }}\n{{ oracle_xe_password }}\ny\n" | /etc/init.d/oracle-xe configure'
+  args:
+    creates: /etc/oratab
+
+- name: Configure profile for oracle
+  file:
+    content: . /usr/lib/oracle/xe/app/oracle/product/10.2.0/server/bin/oracle_env.sh
+    dest: /etc/profile.d/oracle.sh
+    mode: 0644
+    owner: root
+    group: root
