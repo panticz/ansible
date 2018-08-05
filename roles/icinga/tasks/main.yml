@@ -1,4 +1,11 @@
 ---
+- name: Install required packages
+  package:
+    name: "{{ item }}"
+  with_items:
+    - bc
+    - wget
+
 - include: "{{ item }}"
   with_first_found:
    - install-{{ ansible_distribution|lower }}-{{ ansible_distribution_release }}.yml
@@ -7,3 +14,13 @@
 
 - include: configure-icinga{{ icinga_version }}.yml
 
+- name: Download additional Icinga checks
+  get_url:
+    url: http://dl.panticz.de/icinga/{{ item }}
+    dest: /usr/lib/nagios/plugins/{{ item }}
+    mode: 0755
+  with_items:
+    - check_http_number
+    - check_printer
+    - check_smb_share
+    - check_snmp_printer

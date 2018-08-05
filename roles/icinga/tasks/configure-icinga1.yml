@@ -29,4 +29,4 @@
   blockinfile:
     dest: /etc/apache2/conf-available/icinga.conf
     content: RedirectMatch "^/$" "/icinga/"
-  notify: apache reload
+  notify: service apache reload
