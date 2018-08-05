@@ -1,0 +1,20 @@
+---
+- block:
+  - name: Install required packages
+    package:
+      name: "{{ item }}"
+    with_items:
+      - nagios-plugins-basic
+      - perl
+
+  - name: Download additional Icinga checks
+    get_url:
+      url: http://dl.panticz.de/icinga/{{ item }}
+      dest: /usr/lib/nagios/plugins/{{ item }}
+      mode: 0755
+    with_items:
+      - check_hddtemp
+      - check_mem
+      - check_raid
+
+  when: install_monitoring_client
