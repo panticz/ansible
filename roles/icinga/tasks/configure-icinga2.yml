@@ -17,4 +17,4 @@
   blockinfile:
     dest: /etc/apache2/conf-available/icinga2-classicui.conf
     content: RedirectMatch "^/$" "/icinga2-classicui/"
-  notify: apache reload
+  notify: service apache reload
