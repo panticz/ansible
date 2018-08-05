@@ -1,0 +1,44 @@
+---
+- set_fact:
+    prometheus_node_exporter_archive_dir: "{{ prometheus_node_exporter_archive_url.split('/')[-1] | regex_replace('.tar.gz') }}"
+
+- name: Install required packages
+  package:
+    name: "{{ package }}"
+  loop_control:
+    loop_var: package
+  with_items:
+    - ca-certificates
+
+- name: Download {{ prometheus_node_exporter_archive_url }} /tmp/{{ prometheus_node_exporter_archive_dir }}
+  unarchive:
+    src: "{{ prometheus_node_exporter_archive_url }}"
+    remote_src: yes
+    dest: /tmp/
+    creates: /tmp/{{ prometheus_node_exporter_archive_dir }}"
+  register: dl
+
+- name: Update /usr/bin/prometheus-node-exporter
+  copy:
+    src: /tmp/{{ prometheus_node_exporter_archive_dir }}/node_exporter
+    dest: /usr/bin/prometheus-node-exporter
+    remote_src: yes
+    owner: root
+    group: root
+    mode: 0755
+  notify: service prometheus-node-exporter restart
+  when: dl.changed
+
+- name: Configure /etc/default/prometheus-node-exporter
+  copy:
+    content: |
+      ARGS="--collector.diskstats.ignored-devices=^(ram|loop|fd|(h|s|v|xv)d[a-z]|nvme\\d+n\\d+p)\\d+$ \
+            --collector.filesystem.ignored-mount-points=^/(sys|proc|dev|run)($|/) \
+            --collector.netdev.ignored-devices=^lo$ \
+            --collector.textfile.directory=/var/lib/prometheus"
+    owner: root
+    group: root
+    mode: 0644
+    dest: /etc/default/prometheus-node-exporter
+  when: (ansible_distribution == "Ubuntu" and ansible_distribution_version|int < 18)
+  notify: service prometheus-node-exporter restart

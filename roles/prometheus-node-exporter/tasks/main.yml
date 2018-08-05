@@ -1,6 +1,9 @@
 ---
-- name: Install prometheus-node-exporter
+- name: Install prometheus-node-exporter package
   package:
     name: "{{ item }}"
   with_items:
     - prometheus-node-exporter
+
+- include_tasks: update-prometheus-node-exporter-from-archive.yml
+  when: prometheus_node_exporter_archive_url != ""

@@ -1,0 +1,15 @@
+---
+- name: service prometheus-node-exporter start
+  service:
+    name: prometheus-node-exporter
+    state: started
+
+- name: service prometheus-node-exporter stop
+  service:
+    name: prometheus-node-exporter
+    state: stoped
+
+- name: service prometheus-node-exporter restart
+  service:
+    name: prometheus-node-exporter
+    state: restarted
