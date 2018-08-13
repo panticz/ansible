@@ -1,0 +1,35 @@
+---
+- name: Add AtomEditor repository key
+  apt_key:
+    url: https://packagecloud.io/AtomEditor/atom/gpgkey
+
+- name: Add AtomEditor repository
+  apt_repository:
+    repo: deb [arch=amd64] https://packagecloud.io/AtomEditor/atom/any/ any main
+    update_cache: yes
+
+- name: Install AtomEditor package
+  package:
+    name: "{{ item }}"
+  with_items:
+    - atom
+
+- name: Configure AtomEditor as default editor for specific mime-types
+  ini_file:
+    section: Default Applications
+    option: "{{ item }}"
+    value: atom.desktop
+    dest: ~/.local/share/applications/mimeapps.list
+    create: yes
+  with_items:
+    - "{{ atomeditor_mimetypes }}"
+  become: yes
+  become_user: "{{ default_user }}"
+
+# todo: use native ansible module if available
+- name: Install additional AtomEditor packages
+  command: apm install "{{ item }}"
+  with_items:
+    - "{{ atomeditor_packages }}"
+  become: yes
+  become_user: "{{ default_user }}"

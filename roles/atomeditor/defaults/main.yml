@@ -1,0 +1,8 @@
+atomeditor_packages:
+  - atom-beautify
+  - sort-lines
+  - sorter
+
+atomeditor_mimetypes:
+  - text/plain
+  - text/x-shellscript
