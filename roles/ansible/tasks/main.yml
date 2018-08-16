@@ -1,5 +1,5 @@
 ---
-- include: "{{ item }}"
+- include_tasks: "{{ item }}"
   with_first_found:
    - install-{{ ansible_distribution|lower }}-{{ ansible_distribution_release }}.yml
    - install-{{ ansible_distribution|lower }}.yml

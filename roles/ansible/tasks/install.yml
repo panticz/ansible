@@ -1,4 +1,1 @@
 ---
-- name: Install Ansible package
-  package:
-    name: ansible

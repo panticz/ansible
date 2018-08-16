@@ -1,11 +1,23 @@
 ---
-- name: Install required applications
+# https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#latest-releases-via-apt-ubuntu
+
+- name: Install required packages
   package:
-    name: software-properties-common
+    name: "{{ package }}"
+  loop_control:
+    loop_var: package
+  with_items:
+    - software-properties-common
 
 - name: Add Ansible repository
   apt_repository:
-    repo: "ppa:ansible/ansible"
+    repo: ppa:ansible/ansible
     update_cache: yes
 
-- include: install.yml
+- name: Install Ansible package
+  package:
+    name: "{{ package }}"
+  loop_control:
+    loop_var: package
+  with_items:
+    - ansible
