@@ -1,4 +1,9 @@
 ---
+- name: Install yum package
+  package:
+    name: yum
+  when: container_template == "centos"
+
 - name: Create container {{ container_name }} with {{ container_template }} {{ container_release }}
   lxc_container:
     name: "{{ container_name }}"
@@ -12,28 +17,28 @@
     lxc_container:
       name: "{{ container_name }}"
       container_config:
-        - lxc.cgroup.memory.limit_in_bytes={{ container_memory }}
+        - lxc.cgroup.memory.limit_in_bytes = {{ container_memory }}
     when: container_memory is defined
 
   - name: Configure MAC {{ container_mac }} for {{ container_name }}
     lineinfile:
       dest: /var/lib/lxc/{{ container_name }}/config
       regexp: "^lxc.network.hwaddr ="
-      line: "lxc.net.0.hwaddr={{ container_mac }}"
+      line: "lxc.net.0.hwaddr = {{ container_mac }}"
     when: container_mac is defined
 
   - name: Configure IP {{ container_ip }} for {{ container_name }}
     lxc_container:
       name: "{{ container_name }}"
       container_config:
-        - lxc.net.0.ipv4.address={{ container_ip }}
+        - lxc.net.0.ipv4.address = {{ container_ip }}
     when: container_ip is defined
 
-  - name: Configure Gateway {{ container_gateway }} for {{ container_name }}
+  - name: Configure Gateway {{ container_ip }} for {{ container_name }}
     lxc_container:
       name: "{{ container_name }}"
       container_config:
-        - lxc.net.0.ipv4.gateway={{ container_gateway }}
+        - lxc.net.0.ipv4.gateway = {{ container_gateway }}
     when: container_gateway is defined
 
   - name: Configure DNS {{ container_dns }} for {{ container_name }}
@@ -47,21 +52,21 @@
     lxc_container:
       name: "{{ container_name }}"
       container_config:
-        - lxc.group={{ container_group }}
+        - lxc.group = {{ container_group }}
     when: container_group is defined
 
   - name: Configure {{ container_name }} as unconfined container
     lxc_container:
       name: "{{ container_name }}"
       container_config:
-        - lxc.apparmor.profile=unconfined
+        - lxc.apparmor.profile = unconfined
     when: container_unconfined == 1
 
   - name: Enable autostart for {{ container_name }}
     lxc_container:
       name: "{{ container_name }}"
       container_config:
-        - lxc.start.auto=1
+        - lxc.start.auto = 1
     when: container_autostart == 1
 
   - name: Configure additional LXC parameter for {{ container_name }}
@@ -77,6 +82,12 @@
         content: 'Acquire::http::Proxy "http://{{ container_apt_proxy }}:3142/";'
         dest: /var/lib/lxc/{{ container_name }}/rootfs/etc/apt/apt.conf.d/01proxy
       when: container_apt_proxy != ""
+
+    - name: Enable APT mirror {{ container_name }}
+      copy:
+        content: deb {{ container_apt_mirror }} {{ ansible_distribution_release }} main
+        dest: /var/lib/lxc/{{ container_name }}/rootfs/etc/apt/sources.list.d/mirror.list
+      when: container_apt_mirror != ""
 
     - name: Update APT repository on {{ container_name }}
       lxc_container:
@@ -107,6 +118,12 @@
       content: vm.swappiness = 0
       dest: /var/lib/lxc/{{ container_name }}/rootfs/etc/sysctl.d/90-swap.conf
 
+  - name: Configure initial root password
+    lxc_container:
+      name: "{{ container_name }}"
+      container_command: 'echo "root:changeme" | chpasswd'
+    when: container_template == "centos"
+
   - name: Generate root SSH key on {{ container_name }}
     lxc_container:
       name: "{{ container_name }}"
@@ -118,10 +135,17 @@
       dest: /var/lib/lxc/{{ container_name }}/rootfs/root/.ssh/authorized_keys
       mode: 0600
 
+  - name: Fix network
+    lxc_container:
+      name: "{{ container_name }}"
+      container_command: 'ping 8.8.8.8 -c 3'
+    when: container_template == "centos"
+
   - name: Restart container
     lxc_container:
       name: "{{ container_name }}"
       state: restarted
     when: container_restart
 
-  when: lxc_container_created|changed
+  when: lxc_container_created is changed
+

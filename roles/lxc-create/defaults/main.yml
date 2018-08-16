@@ -1,9 +1,10 @@
 ---
 container_template: ubuntu
-container_release: xenial
+container_release: bionic
 container_memory: 4G
 container_autostart: 1
 container_unconfined: 0
 container_apt_proxy: ""
+container_apt_mirror: ""
 container_upgrade: true
 container_restart: false
