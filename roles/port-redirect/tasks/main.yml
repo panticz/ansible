@@ -1,7 +1,7 @@
 ---
 - name: Install iptables-persistent package
   package:
-    pkg: "{{ item }}"
+    name: "{{ item }}"
   with_items:
     - iptables-persistent
 
@@ -9,4 +9,5 @@
   template:
     src: etc/iptables/rules.v4
     dest: /etc/iptables/rules.v4
-  notify: netfilter-persistent restart
+  notify: service netfilter-persistent restart
+

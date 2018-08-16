@@ -1,5 +1,5 @@
 ---
-- name: netfilter-persistent restart
+- name: service netfilter-persistent restart
   service:
     name: netfilter-persistent
     state: restarted
