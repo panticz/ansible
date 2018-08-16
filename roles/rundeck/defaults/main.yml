@@ -1,1 +1,2 @@
-install_ansible_plugin: false
+rundeck_install_ansible_plugin: false
+rundeck_install_cli: true

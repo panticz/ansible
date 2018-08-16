@@ -8,26 +8,33 @@
 
 - name: Add rundeck repository key
   apt_key:
-    keyserver: keyserver.ubuntu.com
-    id: 379CE192D401AB61
+    url: https://bintray.com/user/downloadSubjectPublicKey?username=bintray
 
-- name: Disable APT Proxy for rundeck repository
-  lineinfile:
-    line: 'Acquire::HTTP::Proxy::dl.bintray.com "DIRECT";'
-    dest: /etc/apt/apt.conf.d/99_rundeck
-    create: yes
+# - name: Disable APT Proxy for rundeck repository
+#   lineinfile:
+#     line: 'Acquire::HTTP::Proxy::dl.bintray.com "DIRECT";'
+#     dest: /etc/apt/apt.conf.d/99_rundeck
+#     create: yes
 
 - name: Add rundeck repository
   apt_repository:
-    repo: "deb https://dl.bintray.com/rundeck/rundeck-deb /"
+    repo: deb https://rundeck.bintray.com/rundeck-deb /
     update_cache: yes
+
+- name: Install rundeck package
+  apt:
+    name: "{{ item }}"
+    # allow_unauthenticated: yes
+  with_items:
+    - rundeck
 
 - name: Install rundeck package
   apt:
     name: "{{ item }}"
     allow_unauthenticated: yes
   with_items:
-    - rundeck
+    - rundeck-cli
+  when: rundeck_install_cli
 
 - name: Configure rundeck webserver
   ini_file:
@@ -38,7 +45,7 @@
     no_extra_spaces: yes
   with_items:
     - { section: , option: grails.serverURL, value: "http://{{ inventory_hostname }}:80" }
-  notify: rundeck restart
+  notify: service rundeck restart
 
 - name: Configure rundeck email
   ini_file:
@@ -52,7 +59,7 @@
     - { section: , option: grails.mail.port, value: "{{ smtp_port }}" }
     - { section: , option: grails.mail.username, value: "{{ smtp_user }}" }
     - { section: , option: grails.mail.password, value: "{{ smtp_password }}" }
-  notify: rundeck restart
+  notify: service rundeck restart
   when: smtp_host is defined
 
 - name: Ensure /var/lib/rundeck belongs to user rundeck
@@ -75,6 +82,6 @@
 
 - name: Install rundeck ansible-plugin
   get_url:
-    url: https://github.com/Batix/rundeck-ansible-plugin/releases/download/2.0.2/ansible-plugin-2.0.2.jar
-    dest: /var/lib/rundeck/libext/ansible-plugin-2.0.2.jar
-  when: install_ansible_plugin
+    url: https://github.com/Batix/rundeck-ansible-plugin/releases/download/2.4.1/ansible-plugin-2.4.1.jar
+    dest: /var/lib/rundeck/libext/ansible-plugin-2.4.1.jar
+  when: rundeck_install_ansible_plugin

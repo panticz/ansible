@@ -1,5 +1,5 @@
 ---
-- name: rundeck restart
+- name: service rundeck restart
   service:
     name: rundeckd
     state: restarted
