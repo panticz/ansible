@@ -1,0 +1,20 @@
+---
+- name: Request Terraform API
+  uri:
+    url: "{{ terraform_api_url }}"
+    return_content: yes
+  register: content
+
+- set_fact:
+    terraform_download_url: "{{ content.json.current_download_url }}"
+    terraform_version: "{{ content.json.current_version }}"
+
+- name: Download Terraform {{ terraform_version }}
+  unarchive:
+    src: "{{ terraform_download_url }}terraform_{{ terraform_version }}_{{ ansible_system|lower}}_amd64.zip"
+    remote_src: yes
+    dest: /usr/local/bin
+    creates: /usr/local/bin/terraform
+    mode: 0755
+    owner: root
+    group: root
