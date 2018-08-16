@@ -1,0 +1,36 @@
+---
+- name: Install packages
+  package:
+    name: "{{ item }}"
+  with_items:
+    - pluma
+
+- name: Configure pluma as default text editor
+  ini_file:
+    section: Default Applications
+    option: "{{ item.option }}"
+    value: "{{ item.value }}"
+    dest: ~/.local/share/applications/mimeapps.list
+    create: yes
+  with_items:
+    - { option: "text/plain", value: "pluma.desktop" }
+  become: yes
+  become_user: "{{ default_user }}"
+
+- name: Configure Pluma
+  dconf:
+    key: "{{ item.key }}"
+    value: "{{ item.value }}"
+  with_items:
+    - { key: "/org/mate/pluma/active-plugins", value: "['spell', 'modelines', 'sort', 'docinfo', 'trailsave', 'filebrowser', 'changecase', 'time']" }
+    - { key: "/org/mate/pluma/bracket-matching", value: "true" }
+    - { key: "/org/mate/pluma/display-line-numbers", value: "true" }
+    - { key: "/org/mate/pluma/editor-font", value: "'Ubuntu Mono 13'" }
+    - { key: "/org/mate/pluma/highlight-current-line", value: "true" }
+    - { key: "/org/mate/pluma/insert-spaces", value: "true" }
+    - { key: "/org/mate/pluma/use-default-font", value: "false" }
+  become: yes
+  become_user: "{{ default_user }}"
+  tags:
+    - gnome
+    - pluma
