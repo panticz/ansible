@@ -1,0 +1,11 @@
+---
+# Create kolla-ansible environment and deploy OpenStack all-in-one installation
+# ansible-playbook openstack.example.com.yml -i inventories/example.com
+
+# Create kolla-ansible environment only
+# ansible-playbook openstack.example.com.yml -i inventories/example.com --skip-tags build
+
+
+- hosts: openstack.example.com
+  roles:
+    - openstack-kolla-ansible
