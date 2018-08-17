@@ -1,0 +1,11 @@
+--- kolla-ansible/ansible/roles/baremetal/tasks/install.yml.org	2018-08-17 10:27:58.176000000 +0200
++++ kolla-ansible/ansible/roles/baremetal/tasks/install.yml	2018-08-17 10:35:17.748000000 +0200
+@@ -83,7 +83,7 @@
+ - name: Install docker SDK for python
+   pip:
+     name: docker
+-    state: latest
++    version: 2.7.0
+     virtualenv: "{{ virtualenv is none | ternary(omit, virtualenv) }}"
+     virtualenv_site_packages: "{{ virtualenv is none | ternary(omit, virtualenv_site_packages) }}"
+   become: True

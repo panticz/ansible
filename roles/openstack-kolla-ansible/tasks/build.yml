@@ -1,0 +1,101 @@
+---
+- block:
+  - name: Execute kolla-ansible bootstrap-servers
+    shell: ./kolla-ansible -i ../ansible/inventory/all-in-one bootstrap-servers
+    register: cmd
+    args:
+      chdir: "{{ target_dir }}/kolla-ansible/tools"
+    environment:
+      ANSIBLE_STDOUT_CALLBACK: debug
+
+  - name: Write logfile /tmp/kolla-ansible_bootstrap-servers.log
+    copy:
+      content: "{{ cmd.stdout }}"
+      dest: /tmp/kolla-ansible_bootstrap-servers.log
+  tags:
+    - bootstrap-servers
+
+
+- block:
+  - name: Execute kolla-ansible prechecks
+    shell: ./kolla-ansible -i ../ansible/inventory/all-in-one prechecks
+    register: cmd
+    args:
+      chdir: "{{ target_dir }}/kolla-ansible/tools"
+    environment:
+      ANSIBLE_STDOUT_CALLBACK: debug
+
+- name: Write logfile /tmp/kolla-ansible_prechecks.log
+  copy:
+    content: "{{ cmd.stdout }}"
+    dest: /tmp/kolla-ansible_prechecks.log
+  tags:
+    - prechecks
+
+
+- block:
+  - name: Execute kolla-ansible deploy
+    shell:  ./kolla-ansible -i ../ansible/inventory/all-in-one deploy
+    register: cmd
+    args:
+      chdir: "{{ target_dir }}/kolla-ansible/tools"
+    environment:
+      ANSIBLE_STDOUT_CALLBACK: debug
+
+  - name: Write logfile /tmp/kolla-ansible_deploy.log
+    copy:
+      content: "{{ cmd.stdout }}"
+      dest: /tmp/kolla-ansible_deploy.log
+  tags:
+    - deploy
+
+
+- block:
+  - name: Execute kolla-ansible post-deploy
+    shell: ./kolla-ansible post-deploy
+    register: cmd
+    args:
+      chdir: "{{ target_dir }}/kolla-ansible/tools"
+    environment:
+      ANSIBLE_STDOUT_CALLBACK: debug
+
+  - name: Write logfile /tmp/kolla-ansible_post-deploy.log
+    copy:
+      content: "{{ cmd.stdout }}"
+      dest: /tmp/kolla-ansible_post-deploy.log
+  tags:
+    - post-deploy
+
+
+- block:
+  - name: Execute init-runonce
+    shell: |
+      . /etc/kolla/admin-openrc.sh
+      ./init-runonce
+    register: cmd
+    args:
+      chdir: "{{ target_dir }}/kolla-ansible/tools"
+    environment:
+      ANSIBLE_STDOUT_CALLBACK: debug
+
+  - name: Write logfile /tmp/init-runonce.log
+    copy:
+      content: "{{ cmd.stdout }}"
+      dest: /tmp/init-runonce.log
+  tags:
+    - init-runonce
+
+
+- block:
+  - name: Read credentials
+    slurp:
+      src: /etc/kolla/passwords.yml
+    register: slurpfile
+
+  - name: OpenStack login credentials
+    debug:
+      msg: |
+        URL:  http://{{ kolla_internal_vip_address }}/
+        User: admin
+        Pass: {{ (slurpfile['content'] | b64decode | regex_search('(keystone_admin_password.*)')).split(':')[-1] | trim }}
+  tags: credentials

@@ -1,0 +1,108 @@
+---
+# https://docs.openstack.org/kolla-ansible/latest/user/quickstart.html
+
+- name: Install APT packages
+  package:
+    name: "{{ item }}"
+  with_items:
+    - apt-transport-https
+    - bash-completion
+    - curl
+    - gcc
+    - libffi-dev
+    - libssl-dev
+    - python-dev
+    - python-pip
+    - python-selinux
+    - python-setuptools
+    - screen
+
+- name: Install PIP packages
+  pip:
+    name: "{{ item }}"
+  with_items:
+    - python-glanceclient
+    - python-neutronclient
+    - python-openstackclient
+
+# todo
+# upgrade pip
+
+- name: Create directories
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "{{ target_dir }}"
+    - /etc/kolla
+
+- name: Clone repositories
+  git:
+    repo: "{{ item }}"
+    dest: "{{ target_dir }}/{{ item.split('/')[-1]}}"
+    update: no
+  with_items:
+    - https://github.com/openstack/kolla
+    - https://github.com/openstack/kolla-ansible
+  tags:
+    - git
+
+- name: Install python requirements
+  pip:
+    requirements: "{{ item }}"
+  with_items:
+    - "{{ target_dir }}/kolla-ansible/requirements.txt"
+    - "{{ target_dir }}/kolla/requirements.txt"
+
+- name: Link kolla configuration files
+  file:
+    src: "{{ item }}"
+    dest: /etc/kolla/{{ item.split('/')[-1]}}
+    state: link
+  with_items:
+    - "{{ target_dir }}/kolla-ansible/etc/kolla/globals.yml"
+    - "{{ target_dir }}/kolla-ansible/etc/kolla/passwords.yml"
+  tags: link
+
+- name: Configure kolla-ansible settings
+  lineinfile:
+    dest: /etc/kolla/globals.yml
+    regexp: '^[#]?{{ item.key }}:'
+    line: '{{ item.key }}: "{{ item.value }}"'
+  with_items:
+    - { key: kolla_base_distro, value: ubuntu }
+    - { key: kolla_install_type, value: source }
+    - { key: kolla_internal_vip_address, value: "{{ kolla_internal_vip_address }}" }
+    - { key: network_interface, value: eth0 }
+    - { key: neutron_external_interface, value: eth1 }
+    - { key: openstack_release, value: "{{ openstack_release }}" }
+    # - { key: enable_grafana, value: yes }
+    # - { key: enable_ironic_ipxe, value: yes }
+  tags:
+    - configure
+
+- name: Link to kolla-ansible repositoriey to ~/kolla-ansible
+  file:
+    src: "{{ target_dir }}/kolla-ansible"
+    dest: ~/kolla-ansible
+    state: link
+  tags: link
+
+- name: Execute generate_passwords.py
+  shell: ./generate_passwords.py
+  args:
+    chdir: "{{ target_dir }}/kolla-ansible/tools"
+
+- name: "Rocky workarround: Downgrade Docker SDK for Python to 2.7.0"
+  patch:
+    src: install.yml.patch
+    dest: "{{ target_dir }}/kolla-ansible/ansible/roles/baremetal/tasks/install.yml"
+  tags:
+    - patch
+
+- import_tasks: build.yml
+  tags: build
+
+# todo:
+# configure global environment variables
+# . /etc/kolla/admin-openrc.sh

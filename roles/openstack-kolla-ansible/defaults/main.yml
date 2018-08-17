@@ -1,0 +1,4 @@
+target_dir: /opt
+# openstack_release: queens
+openstack_release: master
+kolla_internal_vip_address: 10.10.10.10
