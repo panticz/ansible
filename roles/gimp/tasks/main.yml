@@ -1,0 +1,21 @@
+---
+- name: Install required packages
+  package:
+    name: "{{ package }}"
+  loop_control:
+    loop_var: package
+  with_items:
+    - software-properties-common
+
+- name: Add Gimp repository
+  apt_repository:
+    repo: ppa:otto-kesselgulasch/gimp
+    update_cache: yes
+
+- name: Install Gimp package
+  package:
+    name: "{{ package }}"
+  loop_control:
+    loop_var: package
+  with_items:
+    - gimp
