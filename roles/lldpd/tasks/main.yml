@@ -1,0 +1,18 @@
+---
+- name: Install lldpd package
+  package:
+    name: lldpd
+
+- name: Enable CDP protocol in LLDP daemon
+  ini_file:
+    section: ""
+    option: DAEMON_ARGS
+    value: '"-c"'
+    dest: /etc/default/lldpd
+    no_extra_spaces: yes
+    create: yes
+    owner: root
+    group: root
+    mode: 0644
+  notify: service lldpd restart
+  when: lldpd_enable_cdp
