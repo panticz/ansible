@@ -9,7 +9,7 @@
 
 - name: Download and extract netbeans archive
   unarchive:
-    src: "{{ netbeans_url }}"
+    src: http://www-eu.apache.org/dist/incubator/netbeans/incubating-netbeans/incubating-{{ netbeans_version }}/incubating-netbeans-{{ netbeans_version }}-bin.zip
     remote_src: yes
     dest: /opt
     creates: /opt/netbeans
